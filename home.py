@@ -107,6 +107,11 @@ def create_app(test_config=None):
 
         return render_template("settings.html")
     
+    @app.route("/workout")
+    def workout():
+
+        return render_template("workout.html")
+    
     @app.route("/stats")
     def stats():
         conn = get_db_connection()

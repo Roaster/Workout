@@ -5,8 +5,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 def add_workout_to_db(conn): 
-    """Adds every set from a workout to the SQL database
-    It gets the sets from request.json
+    """
+    Adds every workout set from a workout to the SQL database
+    The date is from request.json
 
     Args:
         conn : SQLITE3 Connection to mysql

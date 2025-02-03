@@ -16,7 +16,7 @@ python db.py
 flask --app home run --debug --host 0.0.0.0
 ```
 
-## Tasks in the Pipeline:
+## Tasks in the Pipeline (Order of priorityish): 
 - Get a better base page system for Flask
 - Deploy Workout table to track only workouts and use that to select from
 - Allow edits to be made to set names
@@ -25,6 +25,9 @@ flask --app home run --debug --host 0.0.0.0
 - Calendar to show heatmap of days worked out
 - Consider user system
 - Clean up folder system
+- Add workout program tracking
+- Add 5/3/1 Calculator
+- Add settings page
 
 ## Changelog
 - Fixed Stats Page - Currently counts every row. Should only count a workout per day - fixed 2/2/25
