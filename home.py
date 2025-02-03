@@ -178,8 +178,8 @@ def create_app(test_config=None):
             return redirect("/")
         return render_template("home.html")
     
-    @app.route("/update_names")
-    def update_names():
+    @app.route("/_update_name")
+    def update_name():
         old_name=""
         new_name=""
         conn = get_db_connection()

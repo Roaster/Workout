@@ -24,6 +24,7 @@ flask --app home run --debug --host 0.0.0.0
 - Graphs
 - Calendar to show heatmap of days worked out
 - Consider user system
+- Clean up folder system
 
 ## Changelog
 - Fixed Stats Page - Currently counts every row. Should only count a workout per day - fixed 2/2/25
