@@ -13,8 +13,8 @@
 
     {% for date in workoutsJson %}
         <div id="workoutDivBlock">
-            Date: {{workoutsJson[date][0][9]}}<br>
-            Workout: {{workoutsJson[date][0][1]}} <br>
+            {{workoutsJson[date][0][9]}}<br>
+            {{workoutsJson[date][0][1]}} <br>
             Max: {{workoutsJson[date][0][8]}}<br>
             {% set count = namespace(value=1) %}
             <button class="setDiv{{date}}" id ="button{{date}}" type="button" onclick="toggleVisibility(this.classList[0])">Show Info</button>

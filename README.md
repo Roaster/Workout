@@ -28,6 +28,7 @@ flask --app home run --debug --host 0.0.0.0
 - Add workout program tracking
 - Add 5/3/1 Calculator
 - Add settings page
+- Will need to handle pages at some point
 
 ## Changelog
 - Fixed Stats Page - Currently counts every row. Should only count a workout per day - fixed 2/2/25
