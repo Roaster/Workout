@@ -1,0 +1,5 @@
+*.db
+.venv
+__pycache__
+# Extra schema for playing around
+schema.sql
