@@ -1,0 +1,150 @@
+* {
+    color: black;
+    font-size: 18px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0px;
+}
+
+html {
+    width: 100vw;
+    overflow-x: hidden;
+}
+
+a:hover {
+    color: blue;
+}
+
+.nextWorkout {
+    margin-bottom: 10px;
+    padding-left: 5px;
+}
+
+.editSetForm {
+    padding: 5px;
+}
+
+.setsDiv {
+    padding: 10px;
+    margin-bottom: 5px;
+
+    border-style: solid;
+    border-width: 2px;
+}
+
+.setItem {
+    margin: 0;
+    padding-bottom: 1px;
+    padding-left: 5px;
+    margin-right: 5px;
+    padding-top: 10px;
+}
+
+#dateDiv {
+    margin-bottom: 10px;
+}
+
+.setDiv {}
+
+.testSetDiv {
+    display: flex;
+    justify-content: space-between;
+
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 5px;
+    border-color: gray;
+
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+[visibility="hidden"] {
+    /* visibility: hidden; */
+    height: 0px;
+    width: 0px;
+    display: none;
+}
+
+.container {
+    margin-left: 33%;
+    margin-right: 33%;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 225px;
+}
+
+#cheatSheetItem {
+    margin: 0px;
+}
+
+#workoutDivBlock {
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 5px;
+    border-color: gray;
+
+    margin-bottom: 10px;
+
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    box-shadow: 0 4px 8px 0;
+}
+
+.settings{
+    color: red;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings_item{
+    /* display:flex; */
+    /* justify-content: space-between; */
+}
+
+#workoutMaster {
+    margin-left: 33%;
+    margin-right: 33%;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-style: solid;
+    box-shadow: 0 4px 8px 0;
+    border-radius: 5px;
+}
+
+#stats1 {
+    margin-left: 33%;
+    margin-right: 33%;
+    padding: 10px;
+    border-style: solid;
+    box-shadow: 0 4px 8px 0;
+}
+
+#menu {
+    margin-left: 33%;
+    margin-right: 33%;
+    margin-bottom: 15px;
+    margin-top: 25px;
+    
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+.menu_item{
+    font-size:25px;
+}
+
+#notesDiv {
+    padding-left: 7px;
+    padding-top: 5px;
+
+    font-style: italic;
+}
+
+.notesText {
+    margin: 0px;
+}

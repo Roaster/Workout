@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block title %}
+        {% endblock %}
+        <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+        <script src="{{ url_for('static',filename='script.js') }}"></script>
+        {% block javascript %}
+        {% endblock %}
+    </head>
+
+    
+    <div id="menu">
+        <a href="http://192.168.1.71:5000/" class="menu_item">Home</a>
+        <a href="/add_workout" class="menu_item">Add Workout</a>
+        <a href="/stats" class="menu_item">Stats</a>
+        <a href="/settings" class="menu_item">Settings</a>
+    </div>
+    {% block content %}
+    {% endblock %}
+</html>

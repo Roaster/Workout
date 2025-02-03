@@ -1,0 +1,18 @@
+{% extends "navbar.html" %}
+{% block title %}
+    <title>Stats</title>
+{% endblock %}
+{% block content %}
+<div id="workoutMaster">
+    Times Benched: {{bench}}<br>
+    Times Squated: {{squat}}<br>
+    Times Deadlifted: {{deadlift}}<br>
+    Times OHP: {{ohp}}<br>
+    <br>
+    Bench Max: {{benchMax}}<br>
+    Squat Max: {{squatMax}}<br>
+    Deadlift Max: {{deadliftMax}}<br>
+    OHP Max: {{ohpMax}}<br>
+    Total: {{total}}
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "navbar.html" %}
+{% block title %}
+<title>Settings</title>
+{% endblock %}
+
+{% block content %}
+<div id="workoutMaster">
+    <div class="settings">
+        <div class="settings_item">
+            <label>Pounds/KGs:</label>
+            <input type="selection" placeholder="Testing">
+        </div>
+        <div class="settings_item">
+            <label>Add Workout:</label>
+            <input type="text" name="workout" placeholder="Bench">
+            <input type="button" value="Add">
+        </div>
+        <div class="settings_item">
+            <label>Remove Workout:</label>
+            <input type="text" name="workout" placeholder="Bench">
+            <input type="button" value="Remove">
+        </div>
+        <div class="settings_item">
+            <label>Current Workouts:</label>
+            <label>Testing...</label>
+        </div>
+    </div>
+</div>
+{% endblock %}
