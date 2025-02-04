@@ -92,7 +92,7 @@ def create_app(test_config=None):
             workouts = conn.execute('SELECT DISTINCT workout FROM workout ORDER BY workout ASC').fetchall()
             print(workouts)
             conn.close()
-            return render_template('base.html', workouts=workouts)
+            return render_template('add_workout.html', workouts=workouts)
     
     # I do not think that this is being used.
     @app.route("/get_workout", methods=['GET'])

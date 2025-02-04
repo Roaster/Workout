@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}
+    <title>Add Workout</title>
+{% endblock %}
+{% block content %}
+<div id="workoutMaster">
+    <form method="post" id="workoutForm" class="addWorkoutForm">
+
+        <div id="dateDiv">
+            <label>What Day?</label> <br>
+            <input type="date" name="date" id="date" value="date" placeholder="today">
+        </div>
+
+        <!-- <div id="dateDiv">
+            <input type="radio" id="bench" name="workout" value="Bench">
+            <label for="bench">Bench</label><br>
+
+            <input type="radio" id="ohp" name="workout" value="OHP">
+            <label for="ohp">OHP</label><br>
+
+            <input type="radio" id="squat" name="workout" value="Squat">
+            <label for="squat">Squat</label><br>
+
+            <input type="radio" id="deadlift" name="workout" value="Deadlift">
+            <label for="deadlift">Deadlift</label><br>
+
+            <input type="radio" id="other" name="workout"> <input type="text" placeholder="Enter workout...">
+        </div> -->
+
+        <button type="button" id="addExerciseButton" onclick="addExercise()">Add Exercise</button><br>
+        <div id="setsDiv" class="setsDiv" count="1">
+            <label for="reps" id="count" value="2">Insert Reps</label>
+            <button type="button" onclick="addInput()">+</button>
+            <button type="button" onclick="removeInput()">-</button>
+            <br>
+            <select id="select_main" name="workout">
+                {% for workout in workouts %}
+                    <option>{{workout[0]}}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <label for="reps">Reps</label>
+            <input type="text" id="reps" name="reps" min="1" max="100" placeholder="Set 1 Reps" required="true">
+            Weight <input type="text" id="weight" name="weight" placeholder="Set 1 Weight" required="true"> <br>
+        </div>
+
+        <label for="notes" id="notesLabel">Notes:</label> <br>
+        <input type="text" id="notes" name="notes" placeholder="notes"> <br>
+
+        <button type="button" onclick="submitWorkout(this.form)">Submit</button>
+    </form>
+</div>
+
+<br>
+<label id="workoutMaster" for="cheatSheetContainer">Cheat sheet</label>
+<div class="container" id="cheatSheetContainer">
+    <div>
+        <p id="cheatSheetItem">+0: 45</p>
+        <p id="cheatSheetItem">+5: 55</p>
+        <p id="cheatSheetItem">+10: 65</p>
+        <p id="cheatSheetItem">+15: 75</p>
+        <p id="cheatSheetItem">+20: 85 </p>
+        <p id="cheatSheetItem">+25: 95 </p>
+        <p id="cheatSheetItem">+30: 105 </p>
+        <p id="cheatSheetItem">+35: 115 </p>
+        <p id="cheatSheetItem">+40: 125 </p>
+    </div>
+    <div>
+        1 Plate Club
+        <p id="cheatSheetItem">+45: 135 </p>
+        <p id="cheatSheetItem">+45,5: 145 </p>
+        <p id="cheatSheetItem">+45,10: 155 </p>
+        <p id="cheatSheetItem">+45,15: 165 </p>
+        <p id="cheatSheetItem">+45,20: 175 </p>
+        <p id="cheatSheetItem">+45,25: 185 </p>
+        <p id="cheatSheetItem">+45,30: 195 </p>
+        <p id="cheatSheetItem">+45,35: 205 </p>
+        <p id="cheatSheetItem">+45,40: 215 </p>
+    </div>
+    <div>
+        2 Plate Club
+        <p id="cheatSheetItem">+45,45: 225 </p>
+        <p id="cheatSheetItem">+45,45,5: 235 </p>
+        <p id="cheatSheetItem">+45,45,10: 245 </p>
+        <p id="cheatSheetItem">+45,45,15: 255 </p>
+        <p id="cheatSheetItem">+45,45,20: 265 </p>
+        <p id="cheatSheetItem">+45,45,25: 275 </p>
+        <p id="cheatSheetItem">+45,45,30: 285 </p>
+        <p id="cheatSheetItem">+45,45,35: 295 </p>
+        <p id="cheatSheetItem">+45,45,40: 305 </p>
+    </div>
+    <div>
+        3 Plate Club
+        <p id="cheatSheetItem">+45,45,45: 315 </p>
+    </div>
+
+</div>
+{% endblock %}
