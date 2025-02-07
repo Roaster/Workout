@@ -89,10 +89,10 @@ def create_app(test_config=None):
             return redirect("/")
         else:
             conn = get_db_connection()
+            workout_names = conn.execute("SELECT workout FROM workouts").fetchall()
             workouts = conn.execute('SELECT DISTINCT workout FROM workout ORDER BY workout ASC').fetchall()
-            print(workouts)
             conn.close()
-            return render_template('add_workout.html', workouts=workouts)
+            return render_template('add_workout.html', workouts=workouts, workout_names=workout_names)
     
     # I do not think that this is being used.
     @app.route("/get_workout", methods=['GET'])
@@ -104,12 +104,12 @@ def create_app(test_config=None):
     
     @app.route("/settings")
     def settings():
-
-        return render_template("settings.html")
+        conn = get_db_connection()
+        workouts = conn.execute("SELECT workout FROM workouts").fetchall()
+        return render_template("settings.html", workouts=workouts)
     
     @app.route("/workout")
     def workout():
-
         return render_template("workout.html")
     
     @app.route("/stats")
@@ -141,17 +141,43 @@ def create_app(test_config=None):
             conn.commit()
             conn.close()
             return 1
+        
+    @app.route("/workout/add", methods=['POST'])
+    def workout_add():
+        workout = request.json['workout']
+        conn = get_db_connection()
+        workouts = conn.execute(f"SELECT * FROM workouts WHERE workout='{workout}'").fetchall()
+        if workouts == []:
+            conn.execute('INSERT INTO workouts (workout) values (?)', (workout,))
+            conn.commit()
+            conn.close()
+            return "Success!", 200
+        else: 
+            return "Workout already added!", 200
+        
+    @app.route("/workout/remove", methods=["POST"])
+    def workout_remove():
+        workout = request.json['workout']
+        conn = get_db_connection()
+        workouts = conn.execute(f"SELECT * FROM workouts WHERE workout='{workout}'").fetchall()
+        if workouts != []:
+            conn.execute(f'DELETE FROM workouts WHERE workout=?', (workout,))
+            conn.commit()
+            conn.close()
+            return "Success!", 200
+        else: 
+            return "Workout does not exist!", 200
     
-    @app.route("/delete/nuke/all")
+    @app.route("/delete/nuke/all", methods=["POST"])
     def delete_nuke_all():
         conn = get_db_connection()
         conn.execute("DELETE FROM workout")
         logger.info(f"Executed: DELETE FROM workout")
         conn.commit()
         conn.close()
-        return redirect("/")
+        return "Success", 200
     
-    @app.route("/delete/<date>")
+    @app.route("/delete/<date>", methods=["POST"])
     def delete_route(date: str):
         '''
         Delete rows based on date column.
@@ -161,7 +187,7 @@ def create_app(test_config=None):
         logger.info(f"Executed: DELETE FROM workout WHERE date={date}")
         conn.commit()
         conn.close()
-        return redirect("/")
+        return "Success", 200
     
     @app.route("/update", methods=["POST", "GET"])
     def update():
@@ -180,10 +206,10 @@ def create_app(test_config=None):
             logger.info(f"Executed: UPDATE workout SET weight='{new_weight}', reps='{new_reps}' WHERE id = {set_id}")
             conn.commit()
             conn.close()
-            return redirect("/")
+            return "Success", 200
         return render_template("home.html")
     
-    @app.route("/_update_name")
+    @app.route("/_update_name", methods=["POST"])
     def update_name():
         old_name=""
         new_name=""
@@ -191,4 +217,5 @@ def create_app(test_config=None):
         conn.execute(f"UPDATE workout SET workout='{new_name}' WHERE workout='{old_name}'")
         conn.commit()
         conn.close()
+        return "Success", 200
     return app

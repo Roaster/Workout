@@ -1,6 +1,7 @@
 BASEURL = "http://192.168.1.71:5000/";
 console.log("running");
 
+// Original add set button. This only works for the first set div
 function addInput() {
     form = document.getElementById('setsDiv');
 
@@ -38,7 +39,7 @@ function addInput() {
     return;
 }
 
-
+// Original remove set button. This only works for the first set div
 function removeInput() {
     repCount = document.getElementById('count').getAttribute("value");
     if (repCount - 2 == 0) {
@@ -60,6 +61,7 @@ function removeInput() {
     }
 }
 
+// Toggles visibilty of an element based on id
 function toggleVisibility(id) {
     console.log(id);
     item = document.getElementById(id);
@@ -79,13 +81,8 @@ function addExercise() {
 
     exerciseForm.setAttribute("count", String(parseInt(exerciseCount) + 1));
     exerciseCount = exerciseForm.getAttribute("count");
-
     notesLabel = document.getElementById("notesLabel");
 
-    // Workout input
-    // newInput = document.createElement("input");
-    // newInput.placeholder = "Exercise " + exerciseCount;
-    // newInput.name = "workout " + exerciseCount;
     // Weight input
     newWeightInput = document.createElement("input");
     newWeightInput.placeholder = "Set 1 Reps";
@@ -94,19 +91,19 @@ function addExercise() {
     newRepInput = document.createElement("input");
     newRepInput.placeholder = "Set 1 Weight";
     newRepInput.name = 'weight' + exerciseCount;
-
+    // Add (+) sets button
     newAddSetButton = document.createElement("button");
     newAddSetButton.type = "button";
     newAddSetButton.textContent = "+";
     newAddSetButton.id = "setsDiv" + exerciseCount;
     newAddSetButton.setAttribute("onclick", "addSetForm(this.id)");
-
+    // Remove (-) sets button
     newRemoveSetButton = document.createElement("button");
     newRemoveSetButton.type = "button";
     newRemoveSetButton.textContent = "-";
     newRemoveSetButton.id = "setsDiv" + exerciseCount;
     newRemoveSetButton.setAttribute("onclick", "removeSetForm(this.id)");
-
+    // Select workout element
     newSelectElement = document.createElement("select");
     newSelectElement.name = "workout " + exerciseCount;
     exerciseOptions = document.getElementById("select_main").getElementsByTagName("option");
@@ -114,7 +111,6 @@ function addExercise() {
     for (var i = 0; i < exerciseOptions.length; i++){
         newOptionWorkoutElement = document.createElement("option");
         newOptionWorkoutElement.text = exerciseOptions[i].text;
-        
         newSelectElement.append(newOptionWorkoutElement);
     }
 
@@ -128,7 +124,6 @@ function addExercise() {
     newDiv.append(newAddSetButton);
     newDiv.append(newRemoveSetButton);
     newDiv.append(document.createElement("br"));
-    // newDiv.append(newInput);
     newDiv.append(newSelectElement);
     newDiv.append(document.createElement("br"));
     newDiv.append(newWeightInput);
@@ -139,7 +134,7 @@ function addExercise() {
     notesLabel.before(newDiv);
 
 }
-
+// This is for the notes and may need to be refactored and changed
 function editExercise(testcaseId) {
     console.log("edit exercise", typeof (testcaseId));
 
@@ -178,7 +173,11 @@ function editExercise(testcaseId) {
     }
     console.log(testcaseId);
 }
-
+/** Add a set to the set div based on the div ID
+ * The set form includes an input for weight and reps
+ * @param {*} setDivId: this is the ID of the div of which to add the set to
+ * 
+ */
 function addSetForm(setDivId) {
     console.log(setDivId);
     setDiv = document.getElementById(setDivId);
@@ -204,7 +203,10 @@ function addSetForm(setDivId) {
     setDiv.appendChild(newSetDiv);
     newRepsInput.focus();
 }
-
+/** Remove a set from the set div based on the div ID
+ * 
+ * @param {*} setDivId: this is the ID of the div of which to remove the set from
+ */
 function removeSetForm(setDivId) {
     console.log(setDivId);
     setDiv = document.getElementById(setDivId);
@@ -220,6 +222,7 @@ function removeSetForm(setDivId) {
  * Delete set by database id.
  * 
  * Hits /delete_by_id/<id> endpoint. 
+ * Turn this into a request
  */
 function deleteSet(id) {
     if (id == null) {
@@ -246,7 +249,7 @@ function deleteSet(id) {
 }
 
 /**
- * Toggles the visibility of input elements to allow for making updates
+ * Toggles the visibility of set input elements to allow for making updates
  */
 function edit_set(id) {
     console.log(id);
@@ -280,21 +283,95 @@ function submit_edit(id) {
     jsonData = JSON.stringify(body);
     newRequest.send(jsonData);
 }
+/** Removes a workout to the workouts table via POST command
+ * 
+ */
+function removeWorkout(){
+    workoutToRemove = document.getElementById("removeWorkoutSettings").value;
+    if(workoutToRemove == ""){
+        alert("Please enter a workout!");
+    } else {
+        jsonData = {"workout":workoutToRemove};
+        _postJSONData(jsonData, "workout/remove");
+    }
+}
+/** Adds a workout to the workouts table via POST command
+ * 
+ */
+function addWorkout(){
+    workoutToAdd = document.getElementById("addWorkoutSettings").value;
+    if(workoutToAdd == ""){
+        alert("Please enter a workout!");
+    } else {
+        jsonData = {"workout":workoutToAdd};
+        _postJSONData(jsonData, "workout/add");
+    }
+}
+
+/** Sends a post request to the specified endpoint
+ * It will provide an alert with the response message
+ * @param jsonData: JSON formatted data to send
+ */
+function _postJSONData(jsonData, endpoint){
+    jsonData = JSON.stringify(jsonData);
+    newRequest = new XMLHttpRequest();
+    newRequest.onload = function (Responsex) {
+        if (newRequest.status == 200){
+            alert(Responsex.originalTarget.responseText);
+            location.reload();
+        } else {
+            alert("Unable to send!");
+        }
+    };
+    newRequest.open("POST", BASEURL + endpoint);
+    newRequest.setRequestHeader("Content-Type", "application/json");
+    newRequest.send(jsonData);
+}
 
 /**
  * Parses the workout form, converts to JSON then POST to BASEURL + "/add_workout"
  */
 function submitWorkout(data) {
+    jsonWorkoutData = _parseForm();
+    jsonWorkoutData = JSON.stringify(jsonWorkoutData);
+    newRequest = new XMLHttpRequest();
+    newRequest.onload = function () {
+        if (newRequest.status == 200){
+            location.replace(BASEURL);
+        } else {
+            alert("Unable to send!");
+        }
+        console.log(newRequest.status);
+    };
+    newRequest.open("POST", BASEURL + "add_workout");
+    newRequest.setRequestHeader("Content-Type", "application/json");
+    newRequest.send(jsonWorkoutData);
+}
+/** Parses the main workout form and returns it in JSON format
+ * Helper function for submitWorkout
+ * @param {*} form_id 
+ * @returns jsonWorkoutData
+ * This looks like 
+ * {12-25-2025 : 
+ *      {"Squat":
+ *          {"reps":5, 
+ *          "weight":135
+ *          }
+ *      }
+ * }
+ * 
+ */
+function _parseForm(form_id){
     myForm = new FormData(document.getElementById("workoutForm"));
-
     jsonWorkoutData = {};
     currentWorkout = null;
     reps = null;
     weight = null;
+    
     for (const item of myForm.entries()) {
+        // each item in myForm has data in tuple format
+        // ("date", 12-25-2025), ("workout", "Squat"), ("reps", 10), ("weight", 25)
         keyword = item[0];
-
-        console.log(keyword);
         if (keyword.includes("workout")) {
             workoutName = item[1];
             if (currentWorkout == null) {
@@ -331,21 +408,5 @@ function submitWorkout(data) {
         });
     }
 
-    jsonWorkoutData = JSON.stringify(jsonWorkoutData);
-    
-    newRequest = new XMLHttpRequest();
-
-    newRequest.onload = function () {
-        if (newRequest.status == 200){
-            location.replace(BASEURL);
-        } else {
-            alert("Unable to send!");
-        }
-        console.log(newRequest.status);
-        
-    };
-    newRequest.open("POST", BASEURL + "add_workout");
-    newRequest.setRequestHeader("Content-Type", "application/json");
-    newRequest.send(jsonWorkoutData);
-
+    return jsonWorkoutData;
 }

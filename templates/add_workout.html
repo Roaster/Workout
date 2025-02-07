@@ -10,23 +10,6 @@
             <label>What Day?</label> <br>
             <input type="date" name="date" id="date" value="date" placeholder="today">
         </div>
-
-        <!-- <div id="dateDiv">
-            <input type="radio" id="bench" name="workout" value="Bench">
-            <label for="bench">Bench</label><br>
-
-            <input type="radio" id="ohp" name="workout" value="OHP">
-            <label for="ohp">OHP</label><br>
-
-            <input type="radio" id="squat" name="workout" value="Squat">
-            <label for="squat">Squat</label><br>
-
-            <input type="radio" id="deadlift" name="workout" value="Deadlift">
-            <label for="deadlift">Deadlift</label><br>
-
-            <input type="radio" id="other" name="workout"> <input type="text" placeholder="Enter workout...">
-        </div> -->
-
         <button type="button" id="addExerciseButton" onclick="addExercise()">Add Exercise</button><br>
         <div id="setsDiv" class="setsDiv" count="1">
             <label for="reps" id="count" value="2">Insert Reps</label>
@@ -34,7 +17,7 @@
             <button type="button" onclick="removeInput()">-</button>
             <br>
             <select id="select_main" name="workout">
-                {% for workout in workouts %}
+                {% for workout in workout_names %}
                     <option>{{workout[0]}}</option>
                 {% endfor %}
             </select>

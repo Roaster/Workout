@@ -12,17 +12,21 @@
         </div>
         <div class="settings_item">
             <label>Add Workout:</label>
-            <input type="text" name="workout" placeholder="Bench">
-            <input type="button" value="Add">
+            <input id="addWorkoutSettings" type="text" name="workout" placeholder="Bench">
+            <input type="button" value="Add" onclick="addWorkout()">
         </div>
         <div class="settings_item">
             <label>Remove Workout:</label>
-            <input type="text" name="workout" placeholder="Bench">
-            <input type="button" value="Remove">
+            <input id="removeWorkoutSettings" type="text" name="workout" placeholder="Bench">
+            <input type="button" value="Remove" onclick="removeWorkout()">
         </div>
         <div class="settings_item">
             <label>Current Workouts:</label>
-            <label>Testing...</label>
+            <ul>
+            {% for workout in workouts %}   
+                <li><label>{{workout[0]}}</label></li>
+            {% endfor %}
+            </ul>
         </div>
     </div>
 </div>
