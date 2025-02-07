@@ -16,17 +16,16 @@ python db.py
 flask --app home run --debug --host 0.0.0.0
 ```
 
-## Tasks in the Pipeline (Order of priorityish): 
+## Tasks in the Pipeline (Order of priority-ish): 
 - Allow edits to be made to set names
 - Nicer UI
 - Graphs
 - Calendar to show heatmap of days worked out
 - Consider user system
 - Clean up project folder setup
-- Add workout program tracking
+- Add workout program tracking i.e Week 3 Day 2 of 5/3/1 cycle
 - Add 5/3/1 Calculator and other exercises
-- Add settings page
-- Will need to handle pages at some point
+- Will need to handle pagination for workouts at some point
 - Move delete X to top right of each workout
 - Deploy to docker container
 
@@ -35,3 +34,4 @@ flask --app home run --debug --host 0.0.0.0
 - Fix DB to track minor workouts too (idea is to store workout by lowercase or maybe a different system to add workouts then choose from pre-added.)
 - Get a better base page system for Flask 2/3/25
 - Deploy Workout table to track only workouts and use that to select from 2/6/25
+- Add settings page
