@@ -3,7 +3,7 @@
     <title>Add Workout</title>
 {% endblock %}
 {% block content %}
-<div id="workoutMaster">
+<div id="workoutMaster" class="border">
     <form method="post" id="workoutForm" class="addWorkoutForm">
 
         <div id="dateDiv">
@@ -11,7 +11,7 @@
             <input type="date" name="date" id="date" value="date" placeholder="today">
         </div>
         <button type="button" id="addExerciseButton" onclick="addExercise()">Add Exercise</button><br>
-        <div id="setsDiv" class="setsDiv" count="1">
+        <div id="setsDiv" class="setsDiv border" count="1">
             <label for="reps" id="count" value="2">Insert Reps</label>
             <button type="button" onclick="addInput()">+</button>
             <button type="button" onclick="removeInput()">-</button>
@@ -36,7 +36,7 @@
 
 <br>
 <label id="workoutMaster" for="cheatSheetContainer">Cheat sheet</label>
-<div class="container" id="cheatSheetContainer">
+<div class="border container flexColumn marginMain" id="cheatSheetContainer">
     <div>
         <p id="cheatSheetItem">+0: 45</p>
         <p id="cheatSheetItem">+5: 55</p>

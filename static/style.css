@@ -9,9 +9,34 @@ html {
     width: 100vw;
     overflow-x: hidden;
 }
+body{
+    height: 100%;
+}
 
 a:hover {
-    color: blue;
+    background-color: rgb(221, 238, 226);
+    border-radius: 5px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.border{
+    border-style: solid;
+    border-color: gray;
+    border-width: 2px;
+    border-radius: 5px;
+}
+
+.main_div{
+    padding-left: 33%;
+    padding-right: 33%;
+}
+
+.flexColumn{
+    display: flex;
+    flex-direction: column;
 }
 
 .nextWorkout {
@@ -26,9 +51,6 @@ a:hover {
 .setsDiv {
     padding: 10px;
     margin-bottom: 5px;
-
-    border-style: solid;
-    border-width: 2px;
 }
 
 .setItem {
@@ -43,34 +65,21 @@ a:hover {
     margin-bottom: 10px;
 }
 
-.setDiv {}
-
 .testSetDiv {
     display: flex;
     justify-content: space-between;
-
-    border-style: solid;
-    border-width: 2px;
-    border-radius: 5px;
-    border-color: gray;
-
     padding: 5px;
     margin-bottom: 10px;
 }
 
 [visibility="hidden"] {
-    /* visibility: hidden; */
     height: 0px;
     width: 0px;
     display: none;
 }
 
 .container {
-    margin-left: 33%;
-    margin-right: 33%;
     margin-top: 10px;
-    display: flex;
-    flex-direction: column;
     flex-wrap: wrap;
     height: 225px;
 }
@@ -80,68 +89,54 @@ a:hover {
 }
 
 #workoutDivBlock {
-    border-style: solid;
-    border-width: 2px;
-    border-radius: 5px;
-    border-color: gray;
-
     margin-bottom: 10px;
-
     padding-left: 20px;
     padding-right: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
-
     box-shadow: 0 4px 8px 0;
-}
-
-.settings{
-    color: red;
-    display: flex;
-    flex-direction: column;
-}
-
-.settings_item{
-    /* display:flex; */
-    /* justify-content: space-between; */
 }
 
 #workoutMaster {
-    margin-left: 33%;
-    margin-right: 33%;
+
     margin-bottom: 15px;
     padding: 10px;
-    border-style: solid;
-    box-shadow: 0 4px 8px 0;
-    border-radius: 5px;
+    /* box-shadow: 0 4px 8px 0; */
 }
 
 #stats1 {
-    margin-left: 33%;
-    margin-right: 33%;
     padding: 10px;
     border-style: solid;
-    box-shadow: 0 4px 8px 0;
+    /* box-shadow: 0 4px 8px 0; */
 }
 
 #menu {
-    margin-left: 33%;
-    margin-right: 33%;
-    margin-bottom: 15px;
-    margin-top: 25px;
-    
+    padding-bottom: 15px;
+    padding-top: 25px;
     display: flex;
     justify-content: center;
     gap: 30px;
-}
-.menu_item{
-    font-size:25px;
+    font-weight: 600;
+    
+    height: 100%;
 }
 
+
+.menu_item{
+    font-size:25px;
+    padding: 2px;
+
+}
+
+.setDateLabel{
+    font-size: 15px;
+    font-weight: 100;
+    color: gray;
+
+}
 #notesDiv {
     padding-left: 7px;
     padding-top: 5px;
-
     font-style: italic;
 }
 

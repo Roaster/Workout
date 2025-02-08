@@ -117,7 +117,7 @@ function addExercise() {
     // A div to hold everything in
     newDiv = document.createElement("div");
     newDiv.id = "setsDiv" + exerciseCount;
-    newDiv.setAttribute("class", "setsDiv");
+    newDiv.setAttribute("class", "setsDiv border");
     newDiv.setAttribute("count", 1);
     // Then we build into the div
     newDiv.append("Exercise" + exerciseCount);
@@ -266,6 +266,8 @@ function submit_edit(id) {
     console.log(id);
     reps = document.getElementById("editSetFormReps-" + id).value;
     weight = document.getElementById("editSetFormWeight-" + id).value;
+    console.log(reps,weight);
+    
 
     newRequest = new XMLHttpRequest();
     newRequest.onload = function () {

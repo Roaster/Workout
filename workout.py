@@ -18,12 +18,14 @@ class WorkSet:
 
     
 class Workout:
-    def __init__(self, workout="Squat", workouts=[], date=datetime.datetime.today()):
-        self.id:str=f"{date}_{workout}"
+    def __init__(self,workout:str="Squat"):
+        self.date = datetime.datetime.today()
         self.workout:str=workout
-        self.workouts:list=workouts 
+        self.id:str=f"{self.date}_{self.workout}"
+        self.workouts:list=[]
         self.sets:int=0
         self.max:int=0
+        
 
     def add_set(self, workout_set:WorkSet):
         """ Add a Set to the workout. Increment sets by 1
@@ -47,6 +49,10 @@ class Workout:
         for set in self.workouts:
             set.print()
     
+    def _set_workout(self, workout):
+        self.workout = workout
+        self.id = f"{self.date}_{self.workout}"
+   
     
 
 

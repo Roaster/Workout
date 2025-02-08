@@ -28,6 +28,8 @@ flask --app home run --debug --host 0.0.0.0
 - Will need to handle pagination for workouts at some point
 - Move delete X to top right of each workout
 - Deploy to docker container
+- Add setting to update workout name
+- Remove workout from form
 
 ## Changelog
 - Fixed Stats Page - Currently counts every row. Should only count a workout per day - fixed 2/2/25

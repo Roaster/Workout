@@ -20,14 +20,15 @@ def add_workout_to_db(conn):
     date_string = datetime.strptime(date, "%Y-%m-%d")
     date_string = date_string.strftime("%A %B %d %Y")
     my_workout = None
-    
+    print(my_workout)
     for workout in workouts:
+        print(workouts[workout])
         if workout == "date":
             continue
         setCount = 1
         for set in workouts[workout]:
             if my_workout == None:
-                my_workout = Workout(workout=workout)
+                my_workout = Workout(workout)
             new_set = WorkSet(1, workout, setCount, set['reps'], set['weight'], "", date_string)
             setCount += 1
             my_workout.add_set(new_set)

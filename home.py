@@ -5,6 +5,7 @@ from work import add_workout_to_db
 from settings import DATABASE_PATH
 import json
 import logging
+from work import Workout, WorkSet
 
 DEPLOY_DB = DATABASE_PATH
 
@@ -72,13 +73,34 @@ def create_app(test_config=None):
 
         # Convert all the workouts into a Dictionary format by DATE
         workouts_json = {}
+        workouts_json2={}
+      
+        workoutX = Workout()
+        date_key = {}
+        # better logic would be nice for this
         for workout in workouts:
+            # print(workout)
+            work_set = WorkSet(workout_id=workout[0], workout=workout[1], set_num=workout[2], reps=workout[3], weight=workout[4], notes=workout[5], date=workout[9])
+            
+            workoutX.add_set(work_set)
             workout_date = workout[7]
+
+            if workouts_json2.get(workout_date) == None:
+                workouts_json2[workout_date] = {}
+
+            if workouts_json2[workout_date].get(work_set.workout) == None:
+                workouts_json2[workout_date][work_set.workout] = []
+
+            if date_key.get(workout_date) == None:
+                date_key[workout_date] =workout[9]
+
             try:
                 workouts_json[workout_date].append(workout)
+                workouts_json2[workout_date][work_set.workout].append(work_set)
             except:
                 workouts_json[workout_date] = [workout]
-        return render_template("home.html", nextWorkout=next_workout, workouts=workouts, workoutsJson=workouts_json)
+                workouts_json2[workout_date][work_set.workout]= [work_set]
+        return render_template("home.html", nextWorkout=next_workout, workouts=workouts, workoutsJson=workouts_json, workoutsJson2=workouts_json2,workoutx=workoutX, date_key=date_key)
         
     @app.route("/add_workout", methods=['GET', 'POST'])
     def add_workout():
@@ -140,7 +162,7 @@ def create_app(test_config=None):
             logger.info(f"Executed: DELETE FROM workout WHERE id={id}")
             conn.commit()
             conn.close()
-            return 1
+            return "Success!", 200
         
     @app.route("/workout/add", methods=['POST'])
     def workout_add():
@@ -177,7 +199,7 @@ def create_app(test_config=None):
         conn.close()
         return "Success", 200
     
-    @app.route("/delete/<date>", methods=["POST"])
+    @app.route("/delete/<date>", methods=["POST", "GET"])
     def delete_route(date: str):
         '''
         Delete rows based on date column.
@@ -187,7 +209,7 @@ def create_app(test_config=None):
         logger.info(f"Executed: DELETE FROM workout WHERE date={date}")
         conn.commit()
         conn.close()
-        return "Success", 200
+        return redirect("/")
     
     @app.route("/update", methods=["POST", "GET"])
     def update():
@@ -218,4 +240,8 @@ def create_app(test_config=None):
         conn.commit()
         conn.close()
         return "Success", 200
+    
+    
     return app
+
+   
