@@ -104,20 +104,16 @@ fieldset+fieldset {
     padding-right: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
-    box-shadow: 0 4px 8px 0;
 }
 
 #workoutMaster {
-
     margin-bottom: 15px;
     padding: 10px;
-
 }
 
 #stats1 {
     padding: 10px;
     border-style: solid;
-
 }
 
 #menu {
@@ -135,13 +131,25 @@ fieldset+fieldset {
     background-color: gray;
     color: white;
 }
-
+.submit_btn:hover {
+    background-color: green;
+    color: white;
+}
+.submit_btn{
+    border-style: none;
+    background-color: transparent;
+    align-self: self-end;
+    border-radius: 5px;
+    font-size: 20px;
+    min-width:28px;
+}
 .edit_btn {
     border-style: none;
     background-color: transparent;
     align-self: self-end;
     border-radius: 5px;
     font-size: 20px;
+    min-width:28px;
 }
 
 .add_set_btn {

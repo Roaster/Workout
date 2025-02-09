@@ -36,7 +36,7 @@
                         <div class="flexColumn test">
                             <button onclick="deleteSet('{{set.workout_id}}')" type="button" class="{{set.workout_id}} delete_btn">&#10006;</button>
                             <button type="button" onclick="edit_set('{{set.workout_id}}')" class="edit_btn">&#9998;</button> 
-                            <button id="submitEditSet-{{set.workout_id}}" type="button" visibility="hidden" onclick="submit_edit('{{set.workout_id}}')">Submit</button>
+                            <button id="submitEditSet-{{set.workout_id}}" type="button" visibility="hidden" onclick="submit_edit('{{set.workout_id}}')" class="submit_btn">&#10004;</button>
                         </div>
                     </div>
                     {% endfor %}
