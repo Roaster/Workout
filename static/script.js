@@ -309,7 +309,9 @@ function addWorkout(){
         _postJSONData(jsonData, "workout/add");
     }
 }
+function addDynamicSet(){
 
+}
 /** Sends a post request to the specified endpoint
  * It will provide an alert with the response message
  * @param jsonData: JSON formatted data to send
@@ -356,8 +358,8 @@ function submitWorkout(data) {
  * This looks like 
  * {12-25-2025 : 
  *      {"Squat":
- *          {"reps":5, 
- *          "weight":135
+ *          {"reps":"5", 
+ *          "weight":"135"
  *          }
  *      }
  * }

@@ -16,7 +16,9 @@ python db.py
 flask --app home run --debug --host 0.0.0.0
 ```
 
-## Tasks in the Pipeline (Order of priority-ish): 
+## Tasks in the Pipeline (Order of priority-ish):
+- Dynamically add workouts (game changer. could be a useful app) 
+- Create a workout title name
 - Allow edits to be made to set names
 - Nicer UI
 - Graphs
@@ -29,7 +31,7 @@ flask --app home run --debug --host 0.0.0.0
 - Move delete X to top right of each workout
 - Deploy to docker container
 - Add setting to update workout name
-- Remove workout from form
+
 
 ## Changelog
 - Fixed Stats Page - Currently counts every row. Should only count a workout per day - fixed 2/2/25
@@ -37,3 +39,4 @@ flask --app home run --debug --host 0.0.0.0
 - Get a better base page system for Flask 2/3/25
 - Deploy Workout table to track only workouts and use that to select from 2/6/25
 - Add settings page
+- Remove workout from form

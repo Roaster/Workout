@@ -30,10 +30,10 @@ class Workout:
     def add_set(self, workout_set:WorkSet):
         """ Add a Set to the workout. Increment sets by 1
 
-        Params: set is a Workset
+        Params: set is a Workset object.
 
         Args:
-            set (workout_set): Workset with workout information.
+            set (workout_set): Workset Object.
         """
         if self.max < int(workout_set.weight) and self.workout == workout_set.workout:
             self.max = int(workout_set.weight)
@@ -49,7 +49,12 @@ class Workout:
         for set in self.workouts:
             set.print()
     
-    def _set_workout(self, workout):
+    def _set_workout(self, workout:str):
+        """Sets the workout name and updates the workout id.
+
+        Args:
+            workout (str): The workout to be updated to.
+        """
         self.workout = workout
         self.id = f"{self.date}_{self.workout}"
    

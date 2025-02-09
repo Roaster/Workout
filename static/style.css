@@ -9,12 +9,14 @@ html {
     width: 100vw;
     overflow-x: hidden;
 }
-body{
+
+body {
     height: 100%;
 }
 
 a:hover {
-    background-color: rgb(221, 238, 226);
+    background-color: gray;
+    color: white;
     border-radius: 5px;
 }
 
@@ -22,21 +24,29 @@ a {
     text-decoration: none;
 }
 
-.border{
+.border {
     border-style: solid;
     border-color: gray;
     border-width: 2px;
     border-radius: 5px;
 }
 
-.main_div{
+.main_div {
     padding-left: 33%;
     padding-right: 33%;
 }
 
-.flexColumn{
+fieldset+fieldset {
+    margin-top: 20px;
+}
+
+.flexColumn {
     display: flex;
     flex-direction: column;
+}
+
+.flexCenter {
+    align-items: center;
 }
 
 .nextWorkout {
@@ -101,13 +111,13 @@ a {
 
     margin-bottom: 15px;
     padding: 10px;
-    /* box-shadow: 0 4px 8px 0; */
+
 }
 
 #stats1 {
     padding: 10px;
     border-style: solid;
-    /* box-shadow: 0 4px 8px 0; */
+
 }
 
 #menu {
@@ -117,23 +127,71 @@ a {
     justify-content: center;
     gap: 30px;
     font-weight: 600;
-    
+
     height: 100%;
 }
 
+.edit_btn:hover {
+    background-color: gray;
+    color: white;
+}
 
-.menu_item{
-    font-size:25px;
+.edit_btn {
+    border-style: none;
+    background-color: transparent;
+    align-self: self-end;
+    border-radius: 5px;
+    font-size: 20px;
+}
+
+.add_set_btn {
+    border-radius: 50px;
+    border-style: none;
+    min-width: 30px;
+    width: 100px;
+}
+
+.addExerciseButton {
+    border-radius: 50px;
+    border-style: none;
+    min-width: 120px;
+    width: 120px;
+}
+
+.addExerciseContainer {
+    margin-bottom: 20px;
+}
+
+.delete_btn:hover {
+    background-color: red;
+    color: white
+}
+
+.delete_btn {
+    width: 25%;
+    min-width: 30px;
+    border-style: none;
+    border-radius: 5px;
+    align-self: self-end;
+    font-weight: 100;
+    background-color: transparent;
+    margin-bottom: 5px;
+    font-size: 20px;
+}
+
+.menu_item {
+    font-size: 25px;
     padding: 2px;
 
 }
 
-.setDateLabel{
+.setDateLabel {
     font-size: 15px;
     font-weight: 100;
     color: gray;
 
 }
+
 #notesDiv {
     padding-left: 7px;
     padding-top: 5px;

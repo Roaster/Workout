@@ -8,106 +8,54 @@
 
 <div id="workoutMaster" class="border">
     <div class="nextWorkout">
-        <p>Next Workout: {{nextWorkout}}</p>
+        <p>{{nextWorkout}} is your upcoming workout</p>
     </div>
 
+    <div class="flexColumn flexCenter addExerciseContainer">
+        <button type="button" class="addExerciseButton">+ Exercise</button>
+    </div>
+    
     {% for date in workoutsJson2 %}
     <div id="workoutDivBlock" class="border">
-        {{date_key[date]}}
-        {% set workout_keys = workoutsJson2[date].keys()|list %} <br>
-        {{workout_keys[0]}} <br>
-        <button class="setDiv{{date}}" id ="button{{date}}" type="button" onclick="toggleVisibility(this.classList[0])">Show Info</button>
+        {% set workout_keys = workoutsJson2[date].keys()|list %}
+        {{workout_keys[0]}} Day<br>
+        <button class="setDiv{{date}}" id ="button{{date}}" type="button" onclick="toggleVisibility(this.classList[0])">Details</button>
         <div id="setDiv{{date}}" class="setDiv" visibility="hidden">
             {% for exercise in workoutsJson2[date] %}
-                {{exercise}} <br>
+
+                <fieldset>
+                    <legend>{{exercise}}</legend>
+                
                     {% for set in workoutsJson2[date][exercise] %}
                     <div class="testSetDiv border">
-                        <p id="setItem-{{set.workout_id}}">Set: {{set.set_num}} <br> Reps: {{set.reps}} - Weight: {{set.weight}} - Volume: {{set.reps|int * set.weight|int}}</p>
-                        <form id="editSetForm-{{set.workout_id}}" class="editSetForm-{{set.workout_id}}" visibility="hidden">
+                        <p id="setItem-{{set.workout_id}}">Set {{set.set_num}} <br> {{set.reps}} Reps x {{set.weight}} lbs. = {{set.reps|int * set.weight|int}} Work</p>
+                        <form id="editSetForm-{{set.workout_id}}" class="editSetForm-{{set.workout_id}} flexColumn" visibility="hidden">
                             <label >Reps</label><input id="editSetFormReps-{{set.workout_id}}" type="text" value="{{set.reps}}">
                             <label>Weight</label><input id="editSetFormWeight-{{set.workout_id}}" type="text" value="{{set.weight}}">
                         </form>
-                            <p>
-                                <button id="submitEditSet-{{set.workout_id}}" type="button" visibility="hidden" onclick="submit_edit('{{set.workout_id}}')">Submit</button>
-                                <button type="button" onclick="edit_set('{{set.workout_id}}')">Edit</button> 
-                                <button onclick="deleteSet('{{set.workout_id}}')" type="button" class="{{set.workout_id}}">x</button> 
-                            </p>
+                        <div class="flexColumn test">
+                            <button onclick="deleteSet('{{set.workout_id}}')" type="button" class="{{set.workout_id}} delete_btn">&#10006;</button>
+                            <button type="button" onclick="edit_set('{{set.workout_id}}')" class="edit_btn">&#9998;</button> 
+                            <button id="submitEditSet-{{set.workout_id}}" type="button" visibility="hidden" onclick="submit_edit('{{set.workout_id}}')">Submit</button>
+                        </div>
                     </div>
                     {% endfor %}
+                    <div class="add_set_div flexColumn flexCenter">
+                        <button type="button" class="add_set_btn">+</button> <br>
+                    </div>
+                </fieldset>
             {% endfor %}
-            
             
         </div>
         <br>
-        Notes
+        <div id="notesDiv{{date}}">
+            <label for="notesDiv{{date}}">Notes: </label>
+            <p id="notesText{{date}}" class="notesText">{{workoutsJson[date[6]]}}</p><br>
+        </div>
         <br>
-        <a href="/delete/{{date}}"><button type="button" class="delete{{date[0]}}" onclick=>Delete</button></a>
-        <button type="button" id="edit{{date[0]}}" workoutId="{{date[0]}}" onclick="editExercise(document.getElementById('edit{{date[0]}}').getAttribute('workoutId'))">Edit</button>
+        <a href="/delete/{{date}}"><button type="button" class="delete{{date}}" onclick=>Delete</button></a>
+        <button type="button" id="edit{{date}}" workoutId="{{date}}" onclick="editExercise(document.getElementById('edit{{date}}').getAttribute('workoutId'))">Edit..</button>
         <label class="setDateLabel">{{date_key[date]}}</label>
     </div>
     {% endfor %}
-
-
-    {% for date in workoutsJson %}
-        <div id="workoutDivBlock" class="border">
-            {{workoutsJson[date][0][1]}} <br>
-            Max: {{workoutsJson[date][0][8]}}<br>
-            <button class="setDiv{{date}}" id ="button{{date}}" type="button" onclick="toggleVisibility(this.classList[0])">Show Info</button>
-            <div id="setDiv{{date}}" class="setDiv" visibility="hidden">
-                {% set currentWorkout = namespace (value = None) %}
-                {% for set in workoutsJson[date] %}
-                    {% if set[7] == date and set[1] == currentWorkout.value %}
-                    <div class="testSetDiv border">
-                        <p id="setItem-{{set[0]}}">Set: {{set[2]}} <br> Reps: {{set[3]}} - Weight: {{set[4]}} - Volume: {{set[3]|int * set[4]|int}}</p>
-                        <form id="editSetForm-{{set[0]}}" class="editSetForm-{{set[0]}}" visibility="hidden">
-                            <label>Reps</label><input type="text" value="{{set[3]}}">
-                            <label>Weight</label><input type="text" value="{{set[4]}}">
-                        </form>
-                            <p>
-                                <button id="submitEditSet-'{{set[0]}}'" type="button" visibility="hidden">Submit</button>
-                                <button type="button" onclick="edit_set('{{set[0]}}')">Edit</button> 
-                                <button onclick="deleteSet('{{set[0]}}')" type="button" class="{{set[0]}}">x</button> 
-                            </p>
-                    </div>
-                            
-                    {% elif set[7] == date %}
-                        {% set currentWorkout.value = set[1] %}
-                        {{set[1]}}
-                        <div class="testSetDiv border">
-                            <p id="setItem-{{set[0]}}">Set: {{set[2]}} 
-                                <br> 
-                                Reps: {{set[3]}} - Weight: {{set[4]}} - Volume: {{set[3]|int * set[4]|int}}
-                            </p>
-                            <form id="editSetForm-{{set[0]}}" class="editSetForm-{{set[0]}}" visibility="hidden">
-                                <label >Reps</label><input id="editSetFormReps-{{set[0]}}" type="text" value="{{set[3]}}">
-                                <label>Weight</label><input id="editSetFormWeight-{{set[0]}}" type="text" value="{{set[4]}}">
-                            </form>
-                            <p>
-                                <button id="submitEditSet-{{set[0]}}" onclick="submit_edit('{{set[0]}}')" type="button" visibility="hidden">Submit</button>
-                                <button type="button" onclick="edit_set('{{set[0]}}')">Edit</button> 
-                                <button onclick="deleteSet('{{set[0]}}')" type="button" class="{{set[0]}}">x</button> 
-                            </p>
-                        </div>
-                        {% endif %}
-                {% endfor %}
-            
-            </div>
-
-            <div id="notesDiv{{date[0]}}">
-                <label for="notesDiv{{date[0]}}">Notes: </label>
-                <p id="notesText{{date[0]}}" class="notesText">{{workoutsJson[date[6]]}}</p><br>
-            </div>
-
-            <br>
-
-            <a href="/delete/{{date}}"><button type="button" class="delete{{date[0]}}" onclick=>Delete</button></a>
-            <button type="button" id="edit{{date[0]}}" workoutId="{{date[0]}}" onclick="editExercise(document.getElementById('edit{{date[0]}}').getAttribute('workoutId'))">Edit</button>
-            <label class="setDateLabel">{{workoutsJson[date][0][9]}}</label>
-        </div>
-    {% endfor %}
-</div>
-
-
-  
-
 {% endblock %}

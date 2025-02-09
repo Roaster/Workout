@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 def add_workout_to_db(conn): 
     """
     Adds every workout set from a workout to the SQL database
-    The date is from request.json
+    The data is from request.json
 
     Args:
         conn : SQLITE3 Connection to mysql
@@ -20,9 +20,7 @@ def add_workout_to_db(conn):
     date_string = datetime.strptime(date, "%Y-%m-%d")
     date_string = date_string.strftime("%A %B %d %Y")
     my_workout = None
-    print(my_workout)
     for workout in workouts:
-        print(workouts[workout])
         if workout == "date":
             continue
         setCount = 1

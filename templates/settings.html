@@ -21,13 +21,16 @@
             <input type="button" value="Remove" onclick="removeWorkout()">
         </div>
         <div class="settings_item">
-            <label>Current Workouts:</label>
-            <ul>
-            {% for workout in workouts %}   
-                <li><label>{{workout[0]}}</label></li>
-            {% endfor %}
-            </ul>
-        </div>
+            <fieldset>
+                <legend>Current Workouts</legend>
+                <ul>
+                    {% for workout in workouts %}   
+                        <li><label>{{workout[0]}}</label></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </fieldset>
+           
     </div>
 </div>
 {% endblock %}
