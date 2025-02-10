@@ -264,9 +264,10 @@ function edit_set(id) {
  */
 function submit_edit(id) {
     console.log(id);
+    set = document.getElementById("editSetFormSet-"+id).value;
     reps = document.getElementById("editSetFormReps-" + id).value;
     weight = document.getElementById("editSetFormWeight-" + id).value;
-    console.log(reps,weight);
+    console.log(reps,weight,set);
     
 
     newRequest = new XMLHttpRequest();
@@ -280,7 +281,8 @@ function submit_edit(id) {
     body = {
         "id": id,
         "weight": weight,
-        "reps": reps
+        "reps": reps,
+        "set": set
     };
     jsonData = JSON.stringify(body);
     newRequest.send(jsonData);
@@ -309,9 +311,48 @@ function addWorkout(){
         _postJSONData(jsonData, "workout/add");
     }
 }
-function addDynamicSet(){
 
+async function addDynamicSet(){
+    document.getElementById("dynamic_workout");
+    document.getElementById("dynamic_reps");
+    document.getElementById("dynamic_weight");
 }
+
+async function submitDynamicSet(){
+    workout = document.getElementById("dynamic_workout_input");
+    weight = document.getElementById("dynamic_weight");
+    reps = document.getElementById("dynamic_reps");
+    console.log(workout.value, weight.value, reps.value);
+
+    message = await fetch(BASEURL+"api/workout/add_workout", {
+        method:"POST",
+        headers:{"Content-Type":"application/json",},
+        body: JSON.stringify({"workout":workout.value, "reps":reps.value, "weight":weight.value})
+    });
+
+    if(await message.ok){
+        location.reload();
+    }
+}
+
+async function submitDynamicSet2(workout_id, weight_id, reps_id, sets_id, date){
+    workout = document.getElementById(workout_id);
+    weight = document.getElementById(weight_id);
+    reps = document.getElementById(reps_id);
+    set = document.getElementById(sets_id);
+    console.log(workout.value, weight.value, reps.value, set.value);
+
+    message = await fetch(BASEURL+"api/workout/add_workout", {
+        method:"POST",
+        headers:{"Content-Type":"application/json",},
+        body: JSON.stringify({"workout":workout.value, "reps":reps.value, "weight":weight.value, "set":set.value, "date":date})
+    });
+
+    if(await message.ok){
+        location.reload();
+    }
+}
+
 /** Sends a post request to the specified endpoint
  * It will provide an alert with the response message
  * @param jsonData: JSON formatted data to send

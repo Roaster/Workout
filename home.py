@@ -6,6 +6,7 @@ from settings import DATABASE_PATH
 import json
 import logging
 from work import Workout, WorkSet
+from datetime import datetime
 
 DEPLOY_DB = DATABASE_PATH
 
@@ -69,6 +70,7 @@ def create_app(test_config=None):
                 conn.execute(f"UPDATE workout SET notes='{request.form[item]}' WHERE id ={item}")
                 conn.commit()
             workouts = conn.execute("SELECT * FROM workout ORDER BY date DESC").fetchall()
+        workout_names = conn.execute("SELECT workout FROM workouts").fetchall()
         conn.close()
 
         # Convert all the workouts into a Dictionary format by DATE
@@ -100,7 +102,7 @@ def create_app(test_config=None):
             except:
                 workouts_json[workout_date] = [workout]
                 workouts_json2[workout_date][work_set.workout]= [work_set]
-        return render_template("home.html", nextWorkout=next_workout, workouts=workouts, workoutsJson=workouts_json, workoutsJson2=workouts_json2,workoutx=workoutX, date_key=date_key)
+        return render_template("home.html", nextWorkout=next_workout, workouts=workouts, workoutsJson=workouts_json, workoutsJson2=workouts_json2,workoutx=workoutX, date_key=date_key, workout_names=workout_names)
         
     @app.route("/add_workout", methods=['GET', 'POST'])
     def add_workout():
@@ -224,8 +226,12 @@ def create_app(test_config=None):
             new_weight = json_data["weight"]
             new_reps = json_data["reps"]
             set_id = json_data["id"]
-            conn.execute(f"UPDATE workout SET weight='{new_weight}', reps='{new_reps}' WHERE id = {set_id}")
-            logger.info(f"Executed: UPDATE workout SET weight='{new_weight}', reps='{new_reps}' WHERE id = {set_id}")
+            if json_data.get("set"):
+                set_num = json_data["set"]
+            else:
+                set_num = -1
+            conn.execute(f"UPDATE workout SET weight='{new_weight}', reps='{new_reps}', setNum='{set_num}' WHERE id = {set_id}")
+            logger.info(f"Executed: UPDATE workout SET weight='{new_weight}', reps='{new_reps}', setNum='{set_num}' WHERE id = {set_id}")
             conn.commit()
             conn.close()
             return "Success", 200
@@ -240,6 +246,40 @@ def create_app(test_config=None):
         conn.commit()
         conn.close()
         return "Success", 200
+    
+    @app.route("/api/workouts/get_all_workouts")
+    def get_all_workouts():
+        conn = get_db_connection()
+        workouts = conn.execute(f"SELECT workout FROM workouts").fetchall()
+        conn.close()
+        return workouts
+
+    @app.route("/api/workout/add_workout", methods=["POST"])    
+    def api_add_workout():
+        print(request.json)
+        if request.json.get("set"):
+            set = request.json["set"]
+        else:
+            set = "1"
+        if request.json.get("date"):
+            date = request.json["date"]
+            date = datetime.strptime(date, "%Y-%m-%d").date()
+        else:
+            date = datetime.now().strftime("%Y-%m-%d")
+        
+        date_string = date.strftime("%A %B %d %Y")
+        
+        workout = request.json["workout"]
+        weight = request.json["weight"]
+        reps = request.json["reps"]
+        print(workout, set, reps, weight, date, date_string)
+        conn = get_db_connection()
+        conn.execute('INSERT INTO workout (workout, setNum, reps, notes, date, max, weight, datestring) VALUES (?,?,?,?,?,?,?,?)',(workout, set, reps, "", date, 0, weight, date_string))
+        conn.commit()
+        conn.close()   
+        return {"message":"success"}, 200
+    
+    
     
     
     return app

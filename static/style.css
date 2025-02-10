@@ -74,7 +74,9 @@ fieldset+fieldset {
 #dateDiv {
     margin-bottom: 10px;
 }
-
+.testSetDiv:hover{
+    background-color: rgb(236, 236, 236);
+}
 .testSetDiv {
     display: flex;
     justify-content: space-between;
@@ -131,6 +133,10 @@ fieldset+fieldset {
     background-color: gray;
     color: white;
 }
+.add_set_btn:hover{
+    background-color: green;
+    color: white;
+}
 .submit_btn:hover {
     background-color: green;
     color: white;
@@ -138,7 +144,7 @@ fieldset+fieldset {
 .submit_btn{
     border-style: none;
     background-color: transparent;
-    align-self: self-end;
+    /* align-self: self-end; */
     border-radius: 5px;
     font-size: 20px;
     min-width:28px;
@@ -156,9 +162,14 @@ fieldset+fieldset {
     border-radius: 50px;
     border-style: none;
     min-width: 30px;
-    width: 100px;
+    width: 30px;
+    font-size: 22px;
+    background-color: transparent;
 }
-
+.addExerciseButton:hover{
+    background-color: green;
+    color: white;
+}
 .addExerciseButton {
     border-radius: 50px;
     border-style: none;
@@ -176,7 +187,7 @@ fieldset+fieldset {
 }
 
 .delete_btn {
-    width: 25%;
+    width: 30px;
     min-width: 30px;
     border-style: none;
     border-radius: 5px;

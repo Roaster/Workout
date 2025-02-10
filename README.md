@@ -17,9 +17,9 @@ flask --app home run --debug --host 0.0.0.0
 ```
 
 ## Tasks in the Pipeline (Order of priority-ish):
-- Dynamically add workouts (game changer. could be a useful app) 
+- Update page with changes dynamically without page refresh
 - Create a workout title name
-- Allow edits to be made to set names
+- Separate css and js by pages
 - Nicer UI
 - Graphs
 - Calendar to show heatmap of days worked out
@@ -40,3 +40,5 @@ flask --app home run --debug --host 0.0.0.0
 - Deploy Workout table to track only workouts and use that to select from 2/6/25
 - Add settings page
 - Remove workout from form
+- Dynamically add workouts and set from home page 2/9
+- Allow edits to be made to set names 2/9
