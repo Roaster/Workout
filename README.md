@@ -7,7 +7,7 @@ To begin adding workouts, make sure that you add your desired exercises via the 
 ```powershell
 python -m venv venv
 .\.venv\Scripts\Activate.ps1
-pip install requirements
+pip install -r requirements.txt
 python db.py
 ```
 ## To start, run the following commands:

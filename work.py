@@ -34,8 +34,7 @@ def add_workout_to_db(conn):
     for set in my_workout.workouts:
         logger.info(f"INSERTING: Workout {set.workout}, setNum {set.set_num}, reps {set.reps}, notes {set.notes}, date {date}, workout.max{my_workout.max}, set.weight{set.weight}, set.date{set.date}" )
         conn.execute('INSERT INTO workout (workout, setNum, reps, notes, date, max, weight, datestring) VALUES (?,?,?,?,?,?,?,?)',(set.workout, set.set_num, set.reps, set.notes, date, my_workout.max, set.weight, set.date))
-        conn.commit()
-        
+        conn.commit() 
     conn.close()
     return 1
    

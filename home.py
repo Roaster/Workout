@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, Response, jsonify
 from work import add_workout_to_db
 from settings import DATABASE_PATH
 import json
@@ -108,7 +108,9 @@ def create_app(test_config=None):
     def add_workout():
         if request.method == 'POST':
             conn = get_db_connection()
-            add_workout_to_db(conn)
+
+            # add_workout_to_db(conn)
+            print("skipping add for now. ")
             conn.close()
             return redirect("/")
         else:
@@ -144,10 +146,10 @@ def create_app(test_config=None):
         deadlift = conn.execute("SELECT COUNT(DISTINCT date) FROM workout WHERE workout = 'Deadlift'").fetchone()[0]
         ohp = conn.execute("SELECT COUNT(DISTINCT date) FROM workout WHERE workout = 'OHP'").fetchone()[0]
 
-        bench_max = conn.execute("select max(max) FROM workout WHERE workout = 'Bench'").fetchone()[0]
-        squat_max = conn.execute("select max(max) FROM workout WHERE workout = 'Squat'").fetchone()[0]
-        deadlift_max = conn.execute("select max(max) FROM workout WHERE workout = 'Deadlift'").fetchone()[0]
-        ohp_max = conn.execute("select max(max) FROM workout WHERE workout = 'OHP'").fetchone()[0]
+        bench_max = conn.execute("select max(weight) FROM workout WHERE workout = 'Bench'").fetchone()[0]
+        squat_max = conn.execute("select max(weight) FROM workout WHERE workout = 'Squat'").fetchone()[0]
+        deadlift_max = conn.execute("select max(weight) FROM workout WHERE workout = 'Deadlift'").fetchone()[0]
+        ohp_max = conn.execute("select max(weight) FROM workout WHERE workout = 'OHP'").fetchone()[0]
 
         total = int(bench_max if bench_max != None else 0)+int(squat_max if squat_max != None else 0)+int(deadlift_max if deadlift_max != None else 0)+int(ohp_max if ohp_max != None else 0)
         conn.close()
@@ -155,10 +157,17 @@ def create_app(test_config=None):
 
     
 
-    ###################### API STUFF ######################
-    @app.route("/delete_by_id/<id>", methods=['POST'])
+    ###################### API ######################
+    @app.route("/get_all_workouts2")
+    def get_all_workouts2():
+        conn = get_db_connection()
+        workouts = conn.execute("SELECT * from workout").fetchall()
+        conn.close()
+        return workouts
+    
+    @app.route("/delete_by_id/<id>", methods=['POST', 'GET'])
     def delete_by_id(id: int):
-        if request.method == "POST":
+        if request.method == "POST" or request.method == "GET":
             conn = get_db_connection()
             conn.execute("DELETE FROM workout WHERE id = ?", (id,))
             logger.info(f"Executed: DELETE FROM workout WHERE id={id}")
@@ -256,28 +265,37 @@ def create_app(test_config=None):
 
     @app.route("/api/workout/add_workout", methods=["POST"])    
     def api_add_workout():
+        """Adds a workout to the database via "+ Workout" Button
+
+        Returns:
+            dictionary, int: {"message":<message>}, HTTP status
+        """
         print(request.json)
         if request.json.get("set"):
             set = request.json["set"]
         else:
             set = "1"
+
         if request.json.get("date"):
             date = request.json["date"]
             date = datetime.strptime(date, "%Y-%m-%d").date()
+            date_string = date.strftime("%A %B %d %Y")
         else:
             date = datetime.now().strftime("%Y-%m-%d")
-        
-        date_string = date.strftime("%A %B %d %Y")
+            date_string = datetime.now().strftime("%A %B %d %Y")
         
         workout = request.json["workout"]
         weight = request.json["weight"]
         reps = request.json["reps"]
-        print(workout, set, reps, weight, date, date_string)
         conn = get_db_connection()
-        conn.execute('INSERT INTO workout (workout, setNum, reps, notes, date, max, weight, datestring) VALUES (?,?,?,?,?,?,?,?)',(workout, set, reps, "", date, 0, weight, date_string))
+        curs = conn.cursor()
+        curs.execute('INSERT INTO workout (workout, setNum, reps, notes, date, max, weight, datestring) VALUES (?,?,?,?,?,?,?,?)',(workout, set, reps, "", date, 0, weight, date_string))
+       
+        last_row_id = curs.lastrowid
         conn.commit()
+        curs.close()
         conn.close()   
-        return {"message":"success"}, 200
+        return jsonify({"id":last_row_id})
     
     
     

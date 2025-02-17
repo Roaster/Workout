@@ -235,7 +235,8 @@ function deleteSet(id) {
 
     xhr.onload = function (message) {
         console.log(message.explicitOriginalTarget.status);
-        location.reload();
+        document.getElementById("testSet_"+id).remove();
+        // location.reload();
     };
 
     xhr.onerror = function () {
@@ -323,7 +324,10 @@ async function submitDynamicSet(){
     weight = document.getElementById("dynamic_weight");
     reps = document.getElementById("dynamic_reps");
     console.log(workout.value, weight.value, reps.value);
-
+    if (reps.value == "" || weight.value =="" || reps.value == ""){
+        alert("Make sure all fields are populated!");
+        return;
+    }
     message = await fetch(BASEURL+"api/workout/add_workout", {
         method:"POST",
         headers:{"Content-Type":"application/json",},
@@ -335,24 +339,100 @@ async function submitDynamicSet(){
     }
 }
 
-async function submitDynamicSet2(workout_id, weight_id, reps_id, sets_id, date){
-    workout = document.getElementById(workout_id);
-    weight = document.getElementById(weight_id);
-    reps = document.getElementById(reps_id);
-    set = document.getElementById(sets_id);
-    console.log(workout.value, weight.value, reps.value, set.value);
-
+async function submitDynamicSet2(workout_element_id, weight_element_id, reps_element_id, sets_element_id, date){
+    console.log(workout_element_id, weight_element_id, date);
+    workout = document.getElementById(workout_element_id);
+    weight = document.getElementById(weight_element_id);
+    reps = document.getElementById(reps_element_id);
+    if (sets_element_id == "1"){
+        set = "1";
+    } else {
+        set = document.getElementById(sets_element_id).value;
+    }
+    if (workout.value == "" || weight.value == "" || reps.value ==""){
+        alert("Missing values!");
+        return;
+    }
+    console.log(workout.value, weight.value, reps.value, set, date);
+    
     message = await fetch(BASEURL+"api/workout/add_workout", {
         method:"POST",
         headers:{"Content-Type":"application/json",},
-        body: JSON.stringify({"workout":workout.value, "reps":reps.value, "weight":weight.value, "set":set.value, "date":date})
+        body: JSON.stringify({"workout":workout.value, "reps":reps.value, "weight":weight.value, "set":set, "date":date})
     });
 
     if(await message.ok){
-        location.reload();
+        console.log("running");
+        
+        x = await message.json();
+        console.log(x.id);
+        addSetToDOM(workout_element_id, reps_element_id, weight_element_id, "test12_"+date, x.id);
+        // location.reload();
     }
 }
 
+/**
+ * Appends a Set div to the specific workout on the homepage
+ * @param {string} exercise exercise element id to gather the exericse from
+ * @param {*} reps reps element id to gather the reps from
+ * @param {*} weight weight element id to gather the weight from
+ * @param {*} newSetDivElementId element id of the dynamic set div to append the new set before
+ * @returns 
+ */
+function addSetToDOM(exercise, reps, weight, newSetDivElementId, rowId){
+    console.log("Apending");
+   
+    newDiv = document.createElement("div");
+
+    newLabel2 = document.createElement("label");
+    repsValue = document.getElementById(reps).value;
+    weightValue = document.getElementById(weight).value;
+
+    if (repsValue == "" || weightValue == ""){
+        alert("Please ensure all fields are inputted.");
+        return;
+    }
+    newLabel2.innerHTML = "Set 1 <br>" + document.getElementById(reps).value + " Reps x " + document.getElementById(weight).value + " lbs. " + "= " + document.getElementById(reps).value*document.getElementById(weight).value + " Work";
+
+
+    newFieldSet = document.createElement("fieldset");
+    newLegend = document.createElement("legend");
+
+    newLegend.innerHTML = document.getElementById(exercise).value;
+    newFieldSet.append(newLegend);
+    
+    newDiv.setAttribute("class", "testSetDiv border");
+    newDiv.id = "testSet_"+rowId;
+    newDiv.append(newLabel2);
+
+    setOperatorDiv = document.createElement("div");
+    setOperatorDiv.setAttribute("class", "flexColumn");
+
+    deleteBtn = document.createElement("button");
+    deleteBtn.type="button";
+    deleteBtn.innerHTML = "&#10006;";
+    deleteBtn.setAttribute("class", "delete_btn");
+    deleteBtn.setAttribute("onclick", "deleteSet('" + rowId+"')");
+
+    editBtn = document.createElement("button");
+    editBtn.type="button";
+    editBtn.innerHTML = "&#9998;";
+    editBtn.setAttribute("class", "edit_btn");
+
+    addDynamicSetBtn = document.createElement("button");
+    addDynamicSetBtn.type = "button";
+    addDynamicSetBtn.innerHTML = "+";
+
+    setOperatorDiv.append(deleteBtn);
+    setOperatorDiv.append(editBtn);
+    newDiv.append(setOperatorDiv);
+
+
+    newDynamicSetDiv = document.getElementById(newSetDivElementId);
+    newFieldSet.append(newDiv);
+    newFieldSet.append(addDynamicSetBtn);
+    newDynamicSetDiv.before(newFieldSet);
+}
 /** Sends a post request to the specified endpoint
  * It will provide an alert with the response message
  * @param jsonData: JSON formatted data to send

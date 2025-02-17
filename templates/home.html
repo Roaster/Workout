@@ -14,9 +14,7 @@
         <button id="add_exercise_home_btn" type="button" class="addExerciseButton" onclick="toggleVisibility('test123')">+ Workout</button>
     </div>
     <div id="test123" visibility="hidden">
-       
             <div id="setsDiv" class="setsDiv border" count="1">
-                
                 <select id="dynamic_workout_input" name="workout">
                     {% for workout in workout_names %}
                         <option>{{workout[0]}}</option>
@@ -31,9 +29,7 @@
                     <button id="" type="button" onclick="submitDynamicSet()" class="submit_btn">&#10004;</button>
                     <button onclick="" type="button" class="delete_btn">&#10006;</button>
                 </div>
-
             </div>
-        
     </div>
 
     {% for date in workoutsJson2 %}
@@ -48,12 +44,12 @@
                     <legend>{{exercise}}</legend>
                 
                     {% for set in workoutsJson2[date][exercise] %}
-                    <div class="testSetDiv border">
+                    <div id="testSet_{{set.workout_id}}" class="testSetDiv border">
                         <p id="setItem-{{set.workout_id}}">Set {{set.set_num}} <br> {{set.reps}} Reps x {{set.weight}} lbs. = {{set.reps|int * set.weight|int}} Work</p>
                         <form id="editSetForm-{{set.workout_id}}" class="editSetForm-{{set.workout_id}} flexColumn" visibility="hidden">
-                            <label>Set</label><input id="editSetFormSet-{{set.workout_id}}" type="text" value="{{set.set_num}}">
-                            <label>Reps</label><input id="editSetFormReps-{{set.workout_id}}" type="text" value="{{set.reps}}">
-                            <label>Weight</label><input id="editSetFormWeight-{{set.workout_id}}" type="text" value="{{set.weight}}">
+                            <label>Set</label><input id="editSetFormSet-{{set.workout_id}}" type="number" value="{{set.set_num}}">
+                            <label>Reps</label><input id="editSetFormReps-{{set.workout_id}}" type="number" value="{{set.reps}}">
+                            <label>Weight</label><input id="editSetFormWeight-{{set.workout_id}}" type="number" type="number"value="{{set.weight}}">
                         </form>
                         <div class="flexColumn test">
                             <button onclick="deleteSet('{{set.workout_id}}')" type="button" class="{{set.workout_id}} delete_btn">&#10006;</button>
@@ -62,9 +58,9 @@
                         </div>
                     </div>
                     {% endfor %}
-                    <div id="addDynamicSet{{exercise}}_{{date}}" class="testSetDiv flexColumn border" visibility="hidden">
+                    <div id="addDynamicSet{{exercise}}_{{date}}" class="testSetDiv border" visibility="hidden">
                         <div class="flexColumn">
-                            <input id="addExercise{{exercise}}_{{date}}" value={{exercise}} visibility="hidden">
+                            <input id="addExercise{{exercise}}_{{date}}" value='{{exercise}}' visibility="hidden">
                             <label>Set</label>
                             <input id="addSet{{exercise}}_{{date}}" type="number" value={{workoutsJson2[date][exercise]|length+1}} min="1">
                             <label>Reps</label>
@@ -82,8 +78,29 @@
                     </div>
                 </fieldset>
             {% endfor %}
-            <div class="flexColumn flexCenter">
-                <button id="add_exercise_home_btn" type="button" class="" onclick="">+ Exercise</button>
+
+            <div id="test12_{{date}}" visibility="hidden">
+                <div id="setsDiv" class="setsDiv border" count="1">
+                    <select id="dynamic_workout_input_{{date}}" name="workout">
+                        {% for workout in workout_names %}
+                            <option>{{workout[0]}}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <label for="reps">Reps</label>
+                    <input id="dynamic_reps_{{date}}" type="number" id="reps" name="reps" min="1" max="100" placeholder="Reps" required="true">
+                    Weight 
+                    <input id="dynamic_weight_{{date}}" type="number" id="weight" name="weight" min="1" max="2000" placeholder="Weight" required="true">
+                    <div>
+                        <button type="button" onclick="addSetToDOM('dynamic_workout_input_{{date}}', 'dynamic_reps_{{date}}', 'dynamic_weight_{{date}}', 'test12_{{date}}')">Testing</button>
+                        <button type="button" onclick="submitDynamicSet2('dynamic_workout_input_{{date}}', 'dynamic_weight_{{date}}', 'dynamic_reps_{{date}}', '1', '{{date}}'  )" class="submit_btn">&#10004;</button>
+                        <button onclick="" type="button" class="delete_btn">&#10006;</button>
+                    </div>
+                </div>
+        </div>
+
+            <div id="add_exercise_home_btn_{{date}}" class="flexColumn flexCenter">
+                <button id="add_exercise_home_btn" type="button" class="" onclick="toggleVisibility('test12_{{date}}')">+ Exercise</button>
             </div>
             
         </div>
