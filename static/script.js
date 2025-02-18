@@ -269,7 +269,6 @@ function submit_edit(id) {
     reps = document.getElementById("editSetFormReps-" + id).value;
     weight = document.getElementById("editSetFormWeight-" + id).value;
     console.log(reps,weight,set);
-    
 
     newRequest = new XMLHttpRequest();
     newRequest.onload = function () {
@@ -339,7 +338,16 @@ async function submitDynamicSet(){
     }
 }
 
-async function submitDynamicSet2(workout_element_id, weight_element_id, reps_element_id, sets_element_id, date){
+/**
+ * Adds a set to the database and DOM for specific workout  
+ * @param {string} workout_element_id 
+ * @param {string} weight_element_id 
+ * @param {string} reps_element_id 
+ * @param {string} sets_element_id 
+ * @param {string} date 
+ * @returns 
+ */
+async function submitDynamicSetMain(workout_element_id, weight_element_id, reps_element_id, sets_element_id, date){
     console.log(workout_element_id, weight_element_id, date);
     workout = document.getElementById(workout_element_id);
     weight = document.getElementById(weight_element_id);
@@ -366,25 +374,24 @@ async function submitDynamicSet2(workout_element_id, weight_element_id, reps_ele
         
         x = await message.json();
         console.log(x.id);
-        addSetToDOM(workout_element_id, reps_element_id, weight_element_id, "test12_"+date, x.id);
-        // location.reload();
+        _addExerciseSetToDom(set, reps_element_id, weight_element_id, "addDynamicSet"+workout.value +"_"+date, x.id);
+        setsElement = document.getElementById(sets_element_id);
+        setsElement.value = parseInt(set) + 1;
     }
 }
-
 /**
- * Appends a Set div to the specific workout on the homepage
- * @param {string} exercise exercise element id to gather the exericse from
- * @param {*} reps reps element id to gather the reps from
- * @param {*} weight weight element id to gather the weight from
- * @param {*} newSetDivElementId element id of the dynamic set div to append the new set before
+ * Used by submitDynamicSetMain to append a dumby set to an exercise set on the DOM before the append button (at the end of the list)
+ * @param {string} set Set number in workout
+ * @param {string} reps Element ID for reps input 
+ * @param {string} weight Element ID for weight input
+ * @param {string} newSetDivElementId Element ID for element to append new set div before
+ * @param {string} rowId 
  * @returns 
  */
-function addSetToDOM(exercise, reps, weight, newSetDivElementId, rowId){
-    console.log("Apending");
-   
+function _addExerciseSetToDom(set, reps, weight, newSetDivElementId, rowId){
     newDiv = document.createElement("div");
 
-    newLabel2 = document.createElement("label");
+    setInfoLabel = document.createElement("label");
     repsValue = document.getElementById(reps).value;
     weightValue = document.getElementById(weight).value;
 
@@ -392,18 +399,11 @@ function addSetToDOM(exercise, reps, weight, newSetDivElementId, rowId){
         alert("Please ensure all fields are inputted.");
         return;
     }
-    newLabel2.innerHTML = "Set 1 <br>" + document.getElementById(reps).value + " Reps x " + document.getElementById(weight).value + " lbs. " + "= " + document.getElementById(reps).value*document.getElementById(weight).value + " Work";
-
-
-    newFieldSet = document.createElement("fieldset");
-    newLegend = document.createElement("legend");
-
-    newLegend.innerHTML = document.getElementById(exercise).value;
-    newFieldSet.append(newLegend);
+    setInfoLabel.innerHTML = "Set " + set +" <br>" + document.getElementById(reps).value + " Reps x " + document.getElementById(weight).value + " lbs. " + "= " + document.getElementById(reps).value*document.getElementById(weight).value + " Work";
     
     newDiv.setAttribute("class", "testSetDiv border");
     newDiv.id = "testSet_"+rowId;
-    newDiv.append(newLabel2);
+    newDiv.append(setInfoLabel);
 
     setOperatorDiv = document.createElement("div");
     setOperatorDiv.setAttribute("class", "flexColumn");
@@ -429,13 +429,109 @@ function addSetToDOM(exercise, reps, weight, newSetDivElementId, rowId){
 
 
     newDynamicSetDiv = document.getElementById(newSetDivElementId);
+    newDynamicSetDiv.before(newDiv);
+}
+/**
+ * Sends a post request with the workout set data for a specific workout
+ * @param {string} workout_element_id 
+ * @param {string} weight_element_id 
+ * @param {string} reps_element_id 
+ * @param {string} sets_element_id 
+ * @param {string} date 
+ * @returns 
+ */
+async function submitDynamicSet2(workout_element_id, weight_element_id, reps_element_id, sets_element_id, date){
+    console.log(workout_element_id, weight_element_id, date);
+    workout = document.getElementById(workout_element_id);
+    weight = document.getElementById(weight_element_id);
+    reps = document.getElementById(reps_element_id);
+    if (sets_element_id == "1"){
+        set = "1";
+    } else {
+        set = document.getElementById(sets_element_id).value;
+    }
+    if (workout.value == "" || weight.value == "" || reps.value ==""){
+        alert("Missing values!");
+        return;
+    }
+    console.log(workout.value, weight.value, reps.value, set, date);
+    
+    message = await fetch(BASEURL+"api/workout/add_workout", {
+        method:"POST",
+        headers:{"Content-Type":"application/json",},
+        body: JSON.stringify({"workout":workout.value, "reps":reps.value, "weight":weight.value, "set":set, "date":date})
+    });
+
+    if(await message.ok){
+        jsonReponse = await message.json();
+        _addExerciseToDOM(workout_element_id, reps_element_id, weight_element_id, "test12_"+date, jsonReponse.id);
+    }
+}
+
+/**
+ * Appends a new exercise Set div to the specific workout on the homepage
+ * @param {string} exercise exercise element id to gather the exericse from
+ * @param {string} reps reps element id to gather the reps from
+ * @param {string} weight weight element id to gather the weight from
+ * @param {string} newSetDivElementId element id of the dynamic set div to append the new set before
+ * @returns 
+ */
+function _addExerciseToDOM(exercise, reps, weight, newSetDivElementId, rowId){
+    newDiv = document.createElement("div");
+    setInfoLabel = document.createElement("label");
+    repsValue = document.getElementById(reps).value;
+    weightValue = document.getElementById(weight).value;
+
+    if (repsValue == "" || weightValue == ""){
+        alert("Please ensure all fields are inputted.");
+        return;
+    }
+    setInfoLabel.innerHTML = "Set 1 <br>" + document.getElementById(reps).value + " Reps x " + document.getElementById(weight).value + " lbs. " + "= " + document.getElementById(reps).value*document.getElementById(weight).value + " Work";
+
+
+    newFieldSet = document.createElement("fieldset");
+    newLegend = document.createElement("legend");
+
+    newLegend.innerHTML = document.getElementById(exercise).value;
+    newFieldSet.append(newLegend);
+    
+    newDiv.setAttribute("class", "testSetDiv border");
+    newDiv.id = "testSet_"+rowId;
+    newDiv.append(setInfoLabel);
+
+    setOperatorDiv = document.createElement("div");
+    setOperatorDiv.setAttribute("class", "flexColumn");
+
+    deleteBtn = document.createElement("button");
+    deleteBtn.type="button";
+    deleteBtn.innerHTML = "&#10006;";
+    deleteBtn.setAttribute("class", "delete_btn");
+    deleteBtn.setAttribute("onclick", "deleteSet('" + rowId+"')");
+
+    editBtn = document.createElement("button");
+    editBtn.type="button";
+    editBtn.innerHTML = "&#9998;";
+    editBtn.setAttribute("class", "edit_btn");
+
+    addDynamicSetBtn = document.createElement("button");
+    addDynamicSetBtn.type = "button";
+    addDynamicSetBtn.innerHTML = "+";
+    addDynamicSetBtn.setAttribute("class", "add_set_btn");
+
+    setOperatorDiv.append(deleteBtn);
+    setOperatorDiv.append(editBtn);
+    newDiv.append(setOperatorDiv);
+
+
+    newDynamicSetDiv = document.getElementById(newSetDivElementId);
     newFieldSet.append(newDiv);
     newFieldSet.append(addDynamicSetBtn);
     newDynamicSetDiv.before(newFieldSet);
 }
 /** Sends a post request to the specified endpoint
  * It will provide an alert with the response message
- * @param jsonData: JSON formatted data to send
+ * @param {string} jsonData: JSON formatted data to send
+ * @param {string} endpoint: endpoint to send the JSON data to. i.e. workout/add
  */
 function _postJSONData(jsonData, endpoint){
     jsonData = JSON.stringify(jsonData);
@@ -474,9 +570,9 @@ function submitWorkout(data) {
 }
 /** Parses the main workout form and returns it in JSON format
  * Helper function for submitWorkout
- * @param {*} form_id 
- * @returns jsonWorkoutData
- * This looks like 
+ * @param {string} form_id form element id
+ * @returns 
+ * jsonWorkoutData which looks like:
  * {12-25-2025 : 
  *      {"Squat":
  *          {"reps":"5", 
