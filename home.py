@@ -70,7 +70,7 @@ def create_app(test_config=None):
                 conn.execute(f"UPDATE workout SET notes='{request.form[item]}' WHERE id ={item}")
                 conn.commit()
             workouts = conn.execute("SELECT * FROM workout ORDER BY date DESC").fetchall()
-        workout_names = conn.execute("SELECT workout FROM workouts").fetchall()
+        workout_names = conn.execute("SELECT workout FROM workouts ORDER BY workout ASC").fetchall()
         conn.close()
 
         # Convert all the workouts into a Dictionary format by DATE
@@ -296,9 +296,6 @@ def create_app(test_config=None):
         curs.close()
         conn.close()   
         return jsonify({"id":last_row_id})
-    
-    
-    
     
     return app
 
