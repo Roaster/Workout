@@ -339,7 +339,7 @@ async function submitDynamicSet(){
 }
 
 /**
- * Adds a set to the database and DOM for specific workout  
+ * Adds a set to the database and DOM for specific workout. NOT for dynamically added exercises.
  * @param {string} workout_element_id 
  * @param {string} weight_element_id 
  * @param {string} reps_element_id 
@@ -432,7 +432,7 @@ function _addExerciseSetToDom(set, reps, weight, newSetDivElementId, rowId){
     newDynamicSetDiv.before(newDiv);
 }
 /**
- * Sends a post request with the workout set data for a specific workout
+ * Sends a post request with the workout set data for a specific workout.This is the primary function 
  * @param {string} workout_element_id 
  * @param {string} weight_element_id 
  * @param {string} reps_element_id 
@@ -492,10 +492,10 @@ function _addExerciseToDOM(exercise, reps, weight, newSetDivElementId, rowId){
     newLegend.innerHTML = document.getElementById(exercise).value;
     newFieldSet.append(newLegend);
     // Create the Div to put everything into
-    newDiv = document.createElement("div");
-    newDiv.setAttribute("class", "testSetDiv border");
-    newDiv.id = "testSet_"+rowId;
-    newDiv.append(setInfoLabel);
+    newSetDiv = document.createElement("div");
+    newSetDiv.setAttribute("class", "testSetDiv border");
+    newSetDiv.id = "testSet_"+rowId;
+    newSetDiv.append(setInfoLabel);
     // Create the Div to hold delete/edit exericise buttons
     setOperatorDiv = document.createElement("div");
     setOperatorDiv.setAttribute("class", "flexColumn");
@@ -510,43 +510,69 @@ function _addExerciseToDOM(exercise, reps, weight, newSetDivElementId, rowId){
     editBtn.type="button";
     editBtn.innerHTML = "&#9998;";
     editBtn.setAttribute("class", "edit_btn");
+    setOperatorDiv.append(deleteBtn);
+    setOperatorDiv.append(editBtn);
+    newSetDiv.append(setOperatorDiv);
     // Create the + Set Button
     addDynamicSetBtn = document.createElement("button");
     addDynamicSetBtn.type = "button";
     addDynamicSetBtn.innerHTML = "+";
     addDynamicSetBtn.setAttribute("class", "add_set_btn");
-    // Create the hidden Add Set
-    addSetHiddenDiv = document.createElement("div");
-    addSetHiddenDiv.setAttribute("class", "flexColumn");
+    // Create the add set Div
+    addSetDiv = _createAddSetDiv();
+    newDynamicSetDiv = document.getElementById(newSetDivElementId);
+    newFieldSet.append(newSetDiv);
+    newFieldSet.append(addSetDiv);
+    newFieldSet.append(addDynamicSetBtn);
+    newDynamicSetDiv.before(newFieldSet);
+}
+
+//This creates a hidden div to add a set dynamically from the home page after dynamically adding an exercise
+function _createAddSetDiv(){
+    masterDiv = document.createElement("div");
+    masterDiv.setAttribute("class", "testSetDiv border");
+    addSetDiv = document.createElement("div");
+    // Create the set input and label
+    addSetDiv.setAttribute("class", "flexColumn");
+    addSetLabel = document.createElement("label");
+    addSetLabel.innerHTML = "Set";
+    addSetInput = document.createElement("input");
+    addSetInput.setAttribute("type", "number");
+    addSetInput.setAttribute("min","1");
+    addSetInput.setAttribute("value","1" );
+    addSetDiv.append(addSetLabel);
+    addSetDiv.append(addSetInput);
     // Create the Weight input and label
-    addWeightDynamicSetLabel = document.createElement("label");
-    addWeightDynamicSetLabel.innerHTML = "Weight";
-    addWeightDynamicSetInput = document.createElement("input");
-    addWeightDynamicSetInput.setAttribute("type","number");
-    addWeightDynamicSetInput.setAttribute("value","1");
-    addWeightDynamicSetInput.setAttribute("min","0");
-    addSetHiddenDiv.append(addWeightDynamicSetLabel);
-    addSetHiddenDiv.append(addWeightDynamicSetInput);
+    addWeightLabel = document.createElement("label");
+    addWeightLabel.innerHTML = "Weight";
+    addWeightInput = document.createElement("input");
+    addWeightInput.setAttribute("type","number");
+    addWeightInput.setAttribute("value","1");
+    addWeightInput.setAttribute("min","0");
+    addSetDiv.append(addWeightLabel);
+    addSetDiv.append(addWeightInput);
     // Create the Reps input and label
+    dynamicSetInputDiv = document.createElement("div");
+    dynamicSetInputDiv.setAttribute("class", "flexColumn");
     addRepsDynamicSetLabel = document.createElement("label");
     addRepsDynamicSetLabel.innerHTML="Reps";
     addRepsDynamicSetInput = document.createElement("input");
     addRepsDynamicSetInput.setAttribute("type","number");
     addRepsDynamicSetInput.setAttribute("value","1");
     addRepsDynamicSetInput.setAttribute("min","1");
-    addSetHiddenDiv.append(addRepsDynamicSetLabel);
-    addSetHiddenDiv.append(addRepsDynamicSetInput);
+    operatorsDiv = document.createElement("div");
+    operatorsDiv.setAttribute("class", "flexColumn");
+    addBtn = document.createElement("button");
+    addBtn.innerHTML = "&#10004";
+    // Implement submit button logic
+    operatorsDiv.append(addBtn);
     
-    setOperatorDiv.append(deleteBtn);
-    setOperatorDiv.append(editBtn);
-    newDiv.append(setOperatorDiv);
-
-    newDynamicSetDiv = document.getElementById(newSetDivElementId);
-    newFieldSet.append(newDiv);
-    // ###################
-    newFieldSet.append(addSetHiddenDiv);
-    newFieldSet.append(addDynamicSetBtn);
-    newDynamicSetDiv.before(newFieldSet);
+    addSetDiv.append(addRepsDynamicSetLabel);
+    addSetDiv.append(addRepsDynamicSetInput);
+    masterDiv.append(addSetDiv);
+    masterDiv.append(operatorsDiv);
+    
+    return masterDiv;
 }
 /** Sends a post request to the specified endpoint
  * It will provide an alert with the response message
