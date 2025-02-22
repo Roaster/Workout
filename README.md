@@ -17,7 +17,8 @@ flask --app home run --debug --host 0.0.0.0
 ```
 
 ## Tasks in the Pipeline (Order of priority-ish):
-- Update page with changes dynamically without page refresh
+- Update page with changes dynamically without page refresh. Clean up this code.
+- Allow edits to be performed without refresh
 - Create a workout title name
 - Separate css and js by pages
 - Nicer UI

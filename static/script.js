@@ -102,7 +102,7 @@ function addExercise() {
     newRemoveSetButton.type = "button";
     newRemoveSetButton.textContent = "-";
     newRemoveSetButton.id = "setsDiv" + exerciseCount;
-    newRemoveSetButton.setAttribute("onclick", "removeSetForm(this.id)");
+    newRemoveSetButton.setAttribute("onclick", "removeLastSetFromForm(this.id)");
     // Select workout element
     newSelectElement = document.createElement("select");
     newSelectElement.name = "workout " + exerciseCount;
@@ -207,8 +207,7 @@ function addSetForm(setDivId) {
  * 
  * @param {*} setDivId: this is the ID of the div of which to remove the set from
  */
-function removeSetForm(setDivId) {
-    console.log(setDivId);
+function removeLastSetFromForm(setDivId) {
     setDiv = document.getElementById(setDivId);
     setCount = parseInt(setDiv.getAttribute("count"));
     if (setCount == 1) {} else {
@@ -229,15 +228,12 @@ function deleteSet(id) {
         return;
     }
     xhr = new XMLHttpRequest();
-    console.log(xhr.status);
 
     xhr.onload = function (message) {
-        console.log(message.explicitOriginalTarget.status);
         document.getElementById("testSet_"+id).remove();
     };
 
     xhr.onerror = function () {
-        console.error("Request failed");
         alert("An error occurred while trying to delete the set. Please try again.");
     };
 
@@ -249,7 +245,6 @@ function deleteSet(id) {
  * Toggles the visibility of set input elements to allow for making updates
  */
 function edit_set(id) {
-    console.log(id);
     toggleVisibility("setItem-" + id);
     toggleVisibility("editSetForm-" + id);
     toggleVisibility("submitEditSet-" + id);
@@ -259,16 +254,13 @@ function edit_set(id) {
  * Submits the edits made to the set.
  * @param {[type]} id The id of the database row to edit
  */
-function submit_edit(id) {
-    console.log(id);
+function submitEdit(id) {
     set = document.getElementById("editSetFormSet-"+id).value;
     reps = document.getElementById("editSetFormReps-" + id).value;
     weight = document.getElementById("editSetFormWeight-" + id).value;
-    console.log(reps,weight,set);
 
     newRequest = new XMLHttpRequest();
     newRequest.onload = function () {
-        console.log(newRequest.status);
         location.reload();
     };
 
@@ -319,7 +311,6 @@ async function submitDynamicWorkout(){
     workout = document.getElementById("dynamic_workout_input");
     weight = document.getElementById("dynamic_weight");
     reps = document.getElementById("dynamic_reps");
-    console.log(workout.value, weight.value, reps.value);
     if (reps.value == "" || weight.value =="" || reps.value == ""){
         alert("Make sure all fields are populated!");
         return;
@@ -345,7 +336,6 @@ async function submitDynamicWorkout(){
  * @returns 
  */
 async function submitDynamicSetMain(workout_element_id, weight_element_id, reps_element_id, sets_element_id, date){
-    console.log(date);
     workout = document.getElementById(workout_element_id);
     weight = document.getElementById(weight_element_id);
     reps = document.getElementById(reps_element_id);
@@ -358,11 +348,6 @@ async function submitDynamicSetMain(workout_element_id, weight_element_id, reps_
         alert("Missing values!");
         return;
     }
-    // console.log(workout.value, weight.value, reps.value, set, date);
-    console.log(weight.value);
-    console.log(reps.value);
-    console.log(set);
-    console.log(date);
     
     message = await fetch(BASEURL+"api/workout/add_workout", {
         method:"POST",
@@ -371,8 +356,6 @@ async function submitDynamicSetMain(workout_element_id, weight_element_id, reps_
     });
 
     if(await message.ok){
-        console.log("running");
-        
         x = await message.json();
         console.log(x.id);
         _addExerciseSetToDom(set, reps_element_id, weight_element_id, "addDynamicSet"+workout.value +"_"+date, x.id);
