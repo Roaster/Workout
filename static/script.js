@@ -1,7 +1,7 @@
 BASEURL = "http://192.168.1.71:5000/";
 console.log("running");
 
-// Original add set button. This only works for the first set div
+// Add a set to the first set in the workout form on add_workout
 function addInput() {
     form = document.getElementById('setsDiv');
 
@@ -39,7 +39,7 @@ function addInput() {
     return;
 }
 
-// Original remove set button. This only works for the first set div
+// Removes a set from the 1st workout form on add_workout.
 function removeInput() {
     repCount = document.getElementById('count').getAttribute("value");
     if (repCount - 2 == 0) {
@@ -219,10 +219,8 @@ function removeSetForm(setDivId) {
 }
 
 /**
- * Delete set by database id.
+ * Delete set by database row id.
  * 
- * Hits /delete_by_id/<id> endpoint. 
- * Turn this into a request
  */
 function deleteSet(id) {
     if (id == null) {
@@ -236,7 +234,6 @@ function deleteSet(id) {
     xhr.onload = function (message) {
         console.log(message.explicitOriginalTarget.status);
         document.getElementById("testSet_"+id).remove();
-        // location.reload();
     };
 
     xhr.onerror = function () {
@@ -246,7 +243,6 @@ function deleteSet(id) {
 
     xhr.open("POST", BASEURL + "delete_by_id/" + id);
     xhr.send();
-
 }
 
 /**
@@ -299,7 +295,7 @@ function removeWorkout(){
         _postJSONData(jsonData, "workout/remove");
     }
 }
-/** Adds a workout to the workouts table via POST command
+/** Adds a workout exercise to the workouts table. These are the different workout options.
  * 
  */
 function addWorkout(){
@@ -318,7 +314,8 @@ function addWorkout(){
 //     document.getElementById("dynamic_weight");
 // }
 
-async function submitDynamicSet(){
+//This is being used for dynamically adding an entirely new workout
+async function submitDynamicWorkout(){
     workout = document.getElementById("dynamic_workout_input");
     weight = document.getElementById("dynamic_weight");
     reps = document.getElementById("dynamic_reps");
