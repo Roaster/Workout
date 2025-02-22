@@ -30,7 +30,7 @@ flask --app home run --debug --host 0.0.0.0
 - Will need to handle pagination for workouts at some point
 - Move delete X to top right of each workout
 - Deploy to docker container
-- Add setting to update workout name
+- Add setting to update workout name 
 
 
 ## Changelog
