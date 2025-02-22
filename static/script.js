@@ -312,11 +312,11 @@ function addWorkout(){
     }
 }
 
-async function addDynamicSet(){
-    document.getElementById("dynamic_workout");
-    document.getElementById("dynamic_reps");
-    document.getElementById("dynamic_weight");
-}
+// async function addDynamicSet(){
+//     document.getElementById("dynamic_workout");
+//     document.getElementById("dynamic_reps");
+//     document.getElementById("dynamic_weight");
+// }
 
 async function submitDynamicSet(){
     workout = document.getElementById("dynamic_workout_input");
@@ -348,7 +348,7 @@ async function submitDynamicSet(){
  * @returns 
  */
 async function submitDynamicSetMain(workout_element_id, weight_element_id, reps_element_id, sets_element_id, date){
-    console.log(workout_element_id, weight_element_id, date);
+    console.log(date);
     workout = document.getElementById(workout_element_id);
     weight = document.getElementById(weight_element_id);
     reps = document.getElementById(reps_element_id);
@@ -361,7 +361,11 @@ async function submitDynamicSetMain(workout_element_id, weight_element_id, reps_
         alert("Missing values!");
         return;
     }
-    console.log(workout.value, weight.value, reps.value, set, date);
+    // console.log(workout.value, weight.value, reps.value, set, date);
+    console.log(weight.value);
+    console.log(reps.value);
+    console.log(set);
+    console.log(date);
     
     message = await fetch(BASEURL+"api/workout/add_workout", {
         method:"POST",
@@ -441,7 +445,6 @@ function _addExerciseSetToDom(set, reps, weight, newSetDivElementId, rowId){
  * @returns 
  */
 async function submitDynamicSet2(workout_element_id, weight_element_id, reps_element_id, sets_element_id, date){
-    console.log(workout_element_id, weight_element_id, date);
     workout = document.getElementById(workout_element_id);
     weight = document.getElementById(weight_element_id);
     reps = document.getElementById(reps_element_id);
@@ -454,7 +457,6 @@ async function submitDynamicSet2(workout_element_id, weight_element_id, reps_ele
         alert("Missing values!");
         return;
     }
-    console.log(workout.value, weight.value, reps.value, set, date);
     
     message = await fetch(BASEURL+"api/workout/add_workout", {
         method:"POST",
@@ -464,7 +466,7 @@ async function submitDynamicSet2(workout_element_id, weight_element_id, reps_ele
 
     if(await message.ok){
         jsonReponse = await message.json();
-        _addExerciseToDOM(workout_element_id, reps_element_id, weight_element_id, "test12_"+date, jsonReponse.id);
+        _addExerciseToDOM(workout_element_id, reps_element_id, weight_element_id, "test12_"+date, jsonReponse.id, date);
     }
 }
 
@@ -476,7 +478,7 @@ async function submitDynamicSet2(workout_element_id, weight_element_id, reps_ele
  * @param {string} newSetDivElementId element id of the dynamic set div to append the new set before
  * @returns 
  */
-function _addExerciseToDOM(exercise, reps, weight, newSetDivElementId, rowId){
+function _addExerciseToDOM(exerciseElementId, reps, weight, newSetDivElementId, rowId, date){
     repsValue = document.getElementById(reps).value;
     weightValue = document.getElementById(weight).value;
     if (repsValue == "" || weightValue == ""){
@@ -489,7 +491,7 @@ function _addExerciseToDOM(exercise, reps, weight, newSetDivElementId, rowId){
     // Create the fieldset and legend for the exercise
     newFieldSet = document.createElement("fieldset");
     newLegend = document.createElement("legend");
-    newLegend.innerHTML = document.getElementById(exercise).value;
+    newLegend.innerHTML = document.getElementById(exerciseElementId).value;
     newFieldSet.append(newLegend);
     // Create the Div to put everything into
     newSetDiv = document.createElement("div");
@@ -519,7 +521,8 @@ function _addExerciseToDOM(exercise, reps, weight, newSetDivElementId, rowId){
     addDynamicSetBtn.innerHTML = "+";
     addDynamicSetBtn.setAttribute("class", "add_set_btn");
     // Create the add set Div
-    addSetDiv = _createAddSetDiv();
+    addSetDiv = _createAddSetDiv(document.getElementById(exerciseElementId).value, date);
+    addSetDiv.id = "addDynamicSet"+document.getElementById(exerciseElementId).value +"_"+date;
     newDynamicSetDiv = document.getElementById(newSetDivElementId);
     newFieldSet.append(newSetDiv);
     newFieldSet.append(addSetDiv);
@@ -528,15 +531,21 @@ function _addExerciseToDOM(exercise, reps, weight, newSetDivElementId, rowId){
 }
 
 //This creates a hidden div to add a set dynamically from the home page after dynamically adding an exercise
-function _createAddSetDiv(){
+function _createAddSetDiv(exercise, date){
     masterDiv = document.createElement("div");
     masterDiv.setAttribute("class", "testSetDiv border");
+    exerciseInput = document.createElement("input");
+    exerciseInput.setAttribute("visibility", "hidden");
+    exerciseInput.value = exercise;
+    exerciseInput.id = "dynamicExerciseName";
     addSetDiv = document.createElement("div");
+    addSetDiv.append(exerciseInput);
     // Create the set input and label
     addSetDiv.setAttribute("class", "flexColumn");
     addSetLabel = document.createElement("label");
     addSetLabel.innerHTML = "Set";
     addSetInput = document.createElement("input");
+    addSetInput.id = "addSetDynamicSet";
     addSetInput.setAttribute("type", "number");
     addSetInput.setAttribute("min","1");
     addSetInput.setAttribute("value","1" );
@@ -546,6 +555,7 @@ function _createAddSetDiv(){
     addWeightLabel = document.createElement("label");
     addWeightLabel.innerHTML = "Weight";
     addWeightInput = document.createElement("input");
+    addWeightInput.id = "addSetDynamicWeight";
     addWeightInput.setAttribute("type","number");
     addWeightInput.setAttribute("value","1");
     addWeightInput.setAttribute("min","0");
@@ -557,6 +567,7 @@ function _createAddSetDiv(){
     addRepsDynamicSetLabel = document.createElement("label");
     addRepsDynamicSetLabel.innerHTML="Reps";
     addRepsDynamicSetInput = document.createElement("input");
+    addRepsDynamicSetInput.id = "addSetDynamicReps";
     addRepsDynamicSetInput.setAttribute("type","number");
     addRepsDynamicSetInput.setAttribute("value","1");
     addRepsDynamicSetInput.setAttribute("min","1");
@@ -564,6 +575,7 @@ function _createAddSetDiv(){
     operatorsDiv.setAttribute("class", "flexColumn");
     addBtn = document.createElement("button");
     addBtn.innerHTML = "&#10004";
+    addBtn.setAttribute("onclick", "submitDynamicSetMain('dynamicExerciseName', 'addSetDynamicWeight', 'addSetDynamicReps', 'addSetDynamicSet','" +date+"')");
     // Implement submit button logic
     operatorsDiv.append(addBtn);
     
