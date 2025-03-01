@@ -1,6 +1,7 @@
 BASEURL = "http://192.168.1.71:5000/";
 console.log("running");
 console.log("Adding event listeners");
+
 document.getElementById("tester_1234").addEventListener('click', addDynamicWorkout);
 submitSetButton = document.getElementsByName("submit_set");
 for (i = 0; i < submitSetButton.length; i++){
@@ -29,7 +30,7 @@ async function addDynamicWorkout(){
 async function addDynamicSet(){
     
     workout = this.getAttribute("exercise");
-    newSet = createDynamicSet(workout, "1", "3", "5");
+    newSet = createDynamicSet("1", "3", "5");
     document.getElementById("addDynamicSet"+this.id).before(newSet);
 
     return;
@@ -43,24 +44,36 @@ async function addDynamicSet(){
         location.reload();
     }
 }
-function createDynamicSet(workout, setNumber, reps, weight){
+function createDynamicSet(setNumber, reps, weight){
     setLabel = document.createElement("label");
     setLabel.innerHTML = "Set " + setNumber;
     setInformation = document.createElement("label");
     setInformation.innerHTML = reps + " Reps x " + weight + " lbs. = " + parseInt(reps)*parseInt(weight) + " Work";
-
     setDiv = document.createElement("div");
     setDiv.setAttribute("class", "flexColumn");
-
     setDiv.append(setLabel);
     setDiv.append(setInformation);
+    
+    setFunctionsDiv = document.createElement("div");
+    setFunctionsDiv.setAttribute("class", "flexColumn");
+    deleteBtn = document.createElement("button");
+    deleteBtn.type="button";
+    deleteBtn.innerHTML = "X";
+    editBtn = document.createElement("button");
+    editBtn.type="button";
+    editBtn.innerHTML = "E";
+    setFunctionsDiv.append(deleteBtn);
+    setFunctionsDiv.append(editBtn);
+
     masterDiv = document.createElement("div");
     masterDiv.setAttribute("class", "testSetDiv border");
     masterDiv.append(setDiv);
+    masterDiv.append(setFunctionsDiv);
 
     return masterDiv;
 }
 
+// Everything below may be deleted soon.
 // Add a set to the first set in the workout form on add_workout
 function addInput() {
     form = document.getElementById('setsDiv');

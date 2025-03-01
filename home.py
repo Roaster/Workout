@@ -103,7 +103,8 @@ def create_app(test_config=None):
                 workouts_json[workout_date] = [workout]
                 workouts_json2[workout_date][work_set.workout]= [work_set]
         return render_template("home.html", nextWorkout=next_workout, workouts=workouts, workoutsJson=workouts_json, workoutsJson2=workouts_json2,workoutx=workoutX, date_key=date_key, workout_names=workout_names)
-        
+    
+    # This is the form page
     @app.route("/add_workout", methods=['GET', 'POST'])
     def add_workout():
         if request.method == 'POST':

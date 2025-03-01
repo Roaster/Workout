@@ -18,6 +18,6 @@ def database_info():
     table_info = cursor.execute("select * from sqlite_master where type='table' and name = 'workouts'").fetchall()
     print(table_info)
 
-recreate()
-database_info()
+# recreate()
+# database_info()
 connection.close()
