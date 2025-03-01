@@ -1,5 +1,65 @@
 BASEURL = "http://192.168.1.71:5000/";
 console.log("running");
+console.log("Adding event listeners");
+document.getElementById("tester_1234").addEventListener('click', addDynamicWorkout);
+submitSetButton = document.getElementsByName("submit_set");
+for (i = 0; i < submitSetButton.length; i++){
+    submitSetButton[i].addEventListener('click', addDynamicSet);
+}
+
+async function addDynamicWorkout(){
+    workout = document.getElementById("dynamic_workout_input_"+this.id);
+    reps = document.getElementById("dynamic_reps_"+this.id);
+    weight = document.getElementById("dynamic_weight_"+this.id);
+    if (reps.value == "" || weight.value =="" || workout.value == ""){
+        alert("Please ensure all fields are entered.");
+        return;
+    }
+    message = await fetch(BASEURL+"api/workout/add_workout", {
+        method:"POST",
+        headers:{"Content-Type":"application/json",},
+        body: JSON.stringify({"workout":workout.value, "reps":reps.value, "weight":weight.value})
+    });
+
+    if(await message.ok){
+        location.reload();
+    }
+}
+
+async function addDynamicSet(){
+    
+    workout = this.getAttribute("exercise");
+    newSet = createDynamicSet(workout, "1", "3", "5");
+    document.getElementById("addDynamicSet"+this.id).before(newSet);
+
+    return;
+    message = await fetch(BASEURL+"api/workout/add_workout", {
+        method:"POST",
+        headers:{"Content-Type":"application/json",},
+        body: JSON.stringify({"workout":workout.value, "reps":reps.value, "weight":weight.value})
+    });
+
+    if(await message.ok){
+        location.reload();
+    }
+}
+function createDynamicSet(workout, setNumber, reps, weight){
+    setLabel = document.createElement("label");
+    setLabel.innerHTML = "Set " + setNumber;
+    setInformation = document.createElement("label");
+    setInformation.innerHTML = reps + " Reps x " + weight + " lbs. = " + parseInt(reps)*parseInt(weight) + " Work";
+
+    setDiv = document.createElement("div");
+    setDiv.setAttribute("class", "flexColumn");
+
+    setDiv.append(setLabel);
+    setDiv.append(setInformation);
+    masterDiv = document.createElement("div");
+    masterDiv.setAttribute("class", "testSetDiv border");
+    masterDiv.append(setDiv);
+
+    return masterDiv;
+}
 
 // Add a set to the first set in the workout form on add_workout
 function addInput() {
@@ -72,6 +132,7 @@ function toggleVisibility(id) {
         item.setAttribute("visibility", "hidden");
     }
 }
+
 
 // Adds a new exercise div to Add Workout page
 // Need to work on and add better logic
