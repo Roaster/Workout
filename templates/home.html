@@ -11,22 +11,22 @@
         <p>{{nextWorkout}} is your upcoming workout</p>
     </div>
     <div class="flexColumn flexCenter addExerciseContainer">
-        <button id="add_exercise_home_btn" type="button" class="addExerciseButton" onclick="toggleVisibility('test123')">+ Workout</button>
+        <button id="add_exercise_home_btn" type="button" class="addExerciseButton" onclick="toggleVisibilityById('add_new_workout')">+ Workout</button>
     </div>
-    <div id="test123" visibility="hidden">
+    <div id="add_new_workout" visibility="hidden">
             <div id="setsDiv" class="setsDiv border" count="1">
-                <select id="dynamic_workout_input_tester_1234" name="workout">
+                <select id="dynamic_workout_input_main_submit_btn" name="workout">
                     {% for workout in workout_names %}
                         <option>{{workout[0]}}</option>
                     {% endfor %}
                 </select>
                 <br>
                 <label for="reps">Reps</label>
-                <input id="dynamic_reps_tester_1234" type="number" id="reps" name="reps" min="1" max="100" placeholder="Reps" required="true">
+                <input id="dynamic_reps_main_submit_btn" type="number" id="reps" name="reps" min="1" max="100" placeholder="Reps" required="true">
                 Weight 
-                <input id="dynamic_weight_tester_1234" type="number" id="weight" name="weight" min="1" max="2000" placeholder="Weight" required="true">
+                <input id="dynamic_weight_main_submit_btn" type="number" id="weight" name="weight" min="1" max="2000" placeholder="Weight" required="true">
                 <div>
-                    <button id="tester_1234" type="button"  class="submit_btn">&#10004;</button>
+                    <button id="main_submit_btn" type="button"  class="submit_btn">&#10004;</button>
                     <button onclick="" type="button" class="delete_btn">&#10006;</button>
                 </div>
             </div>
@@ -36,7 +36,7 @@
     <div id="workoutDivBlock" class="border">
         {% set workout_keys = workoutsJson2[date].keys()|list %}
         {{workout_keys[0]}} Day<br>
-        <button class="setDiv{{date}}" id ="button{{date}}" type="button" onclick="toggleVisibility(this.classList[0])">Details</button>
+        <button class="setDiv{{date}}" id ="button{{date}}" type="button" onclick="toggleVisibilityById(this.classList[0])">Details</button>
         <div id="setDiv{{date}}" class="setDiv" visibility="hidden">
             {% for exercise in workoutsJson2[date] %}
 
@@ -53,7 +53,7 @@
                         </form>
                         <div class="flexColumn test">
                             <button onclick="deleteSet('{{set.workout_id}}')" type="button" class="{{set.workout_id}} delete_btn">&#10006;</button>
-                            <button type="button" onclick="edit_set('{{set.workout_id}}')" class="edit_btn">&#9998;</button> 
+                            <button id="{{set.workout_id}}" name="editSetBtn" type="button" class="edit_btn">&#9998;</button>
                             <button id="submitEditSet-{{set.workout_id}}" type="button" visibility="hidden" onclick="submitEdit('{{set.workout_id}}')" class="submit_btn">&#10004;</button>
                         </div>
                     </div>
@@ -70,12 +70,11 @@
                             
                         </div>
                         <div class="flexCenter flexColumn test">
-                            <button id="" type="button" onclick="submitDynamicSetMain('addExercise{{exercise}}_{{date}}', 'addWeight{{exercise}}_{{date}}', 'addReps{{exercise}}_{{date}}', 'addSet{{exercise}}_{{date}}', '{{date}}')" class="submit_btn">&#10004;</button>
-                            <button id="{{exercise}}_{{date}}" exercise="{{exercise}}" name="submit_set" type="button">LALA</button>
+                            <button id="{{exercise}}_{{date}}" class="submit_btn" name="submit_set" type="button" date="{{date}}" exercise="{{exercise}}">&#10004;</button>
                         </div>
                     </div>
                     <div class="add_set_div flexColumn flexCenter">
-                        <button type="button" class="add_set_btn" onclick="toggleVisibility('addDynamicSet{{exercise}}_{{date}}')">+</button> <br>
+                        <button type="button" class="add_set_btn" onclick="toggleVisibilityById('addDynamicSet{{exercise}}_{{date}}')">+</button> <br>
                     </div>
                 </fieldset>
             {% endfor %}
@@ -93,15 +92,14 @@
                     Weight 
                     <input id="dynamic_weight_{{date}}" type="number" id="weight" name="weight" min="1" max="2000" placeholder="Weight" required="true">
                     <div>
-                        <button type="button" onclick="addSetToDOM('dynamic_workout_input_{{date}}', 'dynamic_reps_{{date}}', 'dynamic_weight_{{date}}', 'test12_{{date}}')">Testing</button>
-                        <button type="button" onclick="submitDynamicSet2('dynamic_workout_input_{{date}}', 'dynamic_weight_{{date}}', 'dynamic_reps_{{date}}', '1', '{{date}}'  )" class="submit_btn">&#10004;</button>
-                        <button onclick="" type="button" class="delete_btn">&#10006;</button>
+                        <button type="button" date="{{date}}" id="addNewWorkoutToExisting" class="submit_btn">&#10004;</button>
+                        <button type="button" onclick="submitDynamicSet2('dynamic_workout_input_{{date}}', 'dynamic_weight_{{date}}', 'dynamic_reps_{{date}}', '1', '{{date}}'  )" class="submit_btn">OLD</button>
                     </div>
                 </div>
         </div>
 
             <div id="add_exercise_home_btn_{{date}}" class="flexColumn flexCenter">
-                <button id="add_exercise_home_btn" type="button" class="" onclick="toggleVisibility('test12_{{date}}')">+ Exercise</button>
+                <button id="add_exercise_home_btn" type="button" class="" onclick="toggleVisibilityById('test12_{{date}}')">+ Exercise</button>
             </div>
             
         </div>

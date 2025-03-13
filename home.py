@@ -11,7 +11,8 @@ from datetime import datetime
 DEPLOY_DB = DATABASE_PATH
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO,format="%(asctime)s - [%(levelname)s]- %(name)s.py - %(funcName)s() - %(message)s")
+logger.setLevel(logging.INFO)
+logging.basicConfig(level=logging.INFO,format="%(asctime)s - [%(levelname)s] - %(name)s.py - %(funcName)s() - %(message)s")
 
 def get_db_connection():
     """Get a sqlite3 db connection
@@ -26,8 +27,7 @@ def create_app(test_config=None):
     """
     Creates flask application
     """
-    logger.info("Started")
-    # create and configure the app
+    logger.debug("Started")
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
@@ -116,6 +116,7 @@ def create_app(test_config=None):
             return redirect("/")
         else:
             conn = get_db_connection()
+            logger.info("Querying for workouts and exercises")
             workout_names = conn.execute("SELECT workout FROM workouts").fetchall()
             workouts = conn.execute('SELECT DISTINCT workout FROM workout ORDER BY workout ASC').fetchall()
             conn.close()
@@ -183,6 +184,7 @@ def create_app(test_config=None):
         workouts = conn.execute(f"SELECT * FROM workouts WHERE workout='{workout}'").fetchall()
         if workouts == []:
             conn.execute('INSERT INTO workouts (workout) values (?)', (workout,))
+            logger.info(f"Inserted {workout} to workouts table")
             conn.commit()
             conn.close()
             return "Success!", 200
@@ -196,6 +198,7 @@ def create_app(test_config=None):
         workouts = conn.execute(f"SELECT * FROM workouts WHERE workout='{workout}'").fetchall()
         if workouts != []:
             conn.execute(f'DELETE FROM workouts WHERE workout=?', (workout,))
+            logger.info(f"Removed {workout} from workouts table")
             conn.commit()
             conn.close()
             return "Success!", 200
@@ -206,7 +209,7 @@ def create_app(test_config=None):
     def delete_nuke_all():
         conn = get_db_connection()
         conn.execute("DELETE FROM workout")
-        logger.info(f"Executed: DELETE FROM workout")
+        logger.info(f"Deleted everything from workout table.")
         conn.commit()
         conn.close()
         return "Success", 200
@@ -218,7 +221,7 @@ def create_app(test_config=None):
         '''
         conn = get_db_connection()
         conn.execute("DELETE FROM workout WHERE date = ?", (date,))
-        logger.info(f"Executed: DELETE FROM workout WHERE date={date}")
+        logger.info(f"Deleted rows where date = {date}")
         conn.commit()
         conn.close()
         return redirect("/")
@@ -259,6 +262,11 @@ def create_app(test_config=None):
     
     @app.route("/api/workouts/get_all_workouts")
     def get_all_workouts():
+        """Get all the workouts from the workout table i.e. Squat, Bench, Deadlift
+
+        Returns:
+            list: All the workouts available
+        """
         conn = get_db_connection()
         workouts = conn.execute(f"SELECT workout FROM workouts").fetchall()
         conn.close()
@@ -266,36 +274,33 @@ def create_app(test_config=None):
 
     @app.route("/api/workout/add_workout", methods=["POST"])    
     def api_add_workout():
-        """Adds a workout to the database via "+ Workout" Button
+        """Adds a workout to the SQL database
 
         Returns:
             dictionary, int: {"message":<message>}, HTTP status
         """
-        print(request.json)
-        if request.json.get("set"):
-            set = request.json["set"]
-        else:
-            set = "1"
+        set = request.json.get("set", 1)
 
-        if request.json.get("date"):
+        if request.json.get("date")=="-1":
+            date = datetime.now().strftime("%Y-%m-%d")
+            date_string = datetime.now().strftime("%A %B %d %Y")
+        else:
             date = request.json["date"]
             date = datetime.strptime(date, "%Y-%m-%d").date()
             date_string = date.strftime("%A %B %d %Y")
-        else:
-            date = datetime.now().strftime("%Y-%m-%d")
-            date_string = datetime.now().strftime("%A %B %d %Y")
         
         workout = request.json["workout"]
         weight = request.json["weight"]
         reps = request.json["reps"]
         conn = get_db_connection()
         curs = conn.cursor()
+        logger.info(f"INSERT INTO workout workout: {workout} - setNum: {set} - reps: {reps} - date: {date} - weight: {weight} - date_string: {date_string}")
         curs.execute('INSERT INTO workout (workout, setNum, reps, notes, date, max, weight, datestring) VALUES (?,?,?,?,?,?,?,?)',(workout, set, reps, "", date, 0, weight, date_string))
        
         last_row_id = curs.lastrowid
         conn.commit()
         curs.close()
-        conn.close()   
+        conn.close()
         return jsonify({"id":last_row_id})
     
     return app

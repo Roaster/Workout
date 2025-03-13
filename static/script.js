@@ -1,49 +1,90 @@
 BASEURL = "http://192.168.1.71:5000/";
-console.log("running");
-console.log("Adding event listeners");
-
-document.getElementById("tester_1234").addEventListener('click', addDynamicWorkout);
-submitSetButton = document.getElementsByName("submit_set");
-for (i = 0; i < submitSetButton.length; i++){
-    submitSetButton[i].addEventListener('click', addDynamicSet);
+/**
+ * Adds a workout set to the SQL table.
+ * @param {string} workout name of workout.
+ * @param {string} setNum set number of workout.
+ * @param {string} reps amount of reps performed in the set.
+ * @param {string} weight amount of weight performed in set.
+ * @param {string} date the date when the set was performed. Use -1 for today.
+ * @returns 
+ */
+async function postWorkout(workout, setNum, reps, weight, date){
+    message = await fetch(BASEURL+"api/workout/add_workout", {
+        method:"POST",
+        headers:{"Content-Type":"application/json",},
+        body: JSON.stringify({"workout":workout, "set":setNum, "reps":reps, "weight":weight, "date":date})
+    });
+    if (await message.ok){
+        return true;
+    }
 }
 
+// ############### Home Page ###################
+//Event Handlers for Edit set buttons
+editSetButtons = document.getElementsByName("editSetBtn");
+for (i=0;i<editSetButtons.length;i++){
+    editSetButtons[i].addEventListener("click",editSetDynamically);
+}
+//Event Handler for Submit workout button
+document.getElementById("main_submit_btn").addEventListener('click', addDynamicWorkout);
+/**
+ * Add a new workout to the SQL database for the current day
+ * @returns 
+ */
 async function addDynamicWorkout(){
-    workout = document.getElementById("dynamic_workout_input_"+this.id);
-    reps = document.getElementById("dynamic_reps_"+this.id);
-    weight = document.getElementById("dynamic_weight_"+this.id);
+    workout = document.getElementById("dynamic_workout_input_"+this.id).value;
+    reps = document.getElementById("dynamic_reps_"+this.id).value;
+    weight = document.getElementById("dynamic_weight_"+this.id).value;
     if (reps.value == "" || weight.value =="" || workout.value == ""){
         alert("Please ensure all fields are entered.");
         return;
     }
-    message = await fetch(BASEURL+"api/workout/add_workout", {
-        method:"POST",
-        headers:{"Content-Type":"application/json",},
-        body: JSON.stringify({"workout":workout.value, "reps":reps.value, "weight":weight.value})
-    });
-
-    if(await message.ok){
+    if(await postWorkout(workout, "1", reps, weight, "-1")){
         location.reload();
     }
 }
-
+// Event Handlers for addDynamicSet
+submitSetButtons = document.getElementsByName("submit_set");
+for (i = 0; i < submitSetButtons.length; i++){
+    submitSetButtons[i].addEventListener('click', addDynamicSet);
+}
+/**
+ * Add a new workout set to the database and append to the page
+ */
 async function addDynamicSet(){
-    
     workout = this.getAttribute("exercise");
-    newSet = createDynamicSet("1", "3", "5");
-    document.getElementById("addDynamicSet"+this.id).before(newSet);
+    date = this.getAttribute("date");
+    setNum = document.getElementById("addSet"+this.id).value;
+    reps = document.getElementById("addReps"+this.id).value;
+    weight = document.getElementById("addWeight"+this.id).value;
+    newSet = createDynamicSet(setNum, reps, weight);
+    if(await postWorkout(workout, setNum, reps, weight, date)){
+        document.getElementById("addDynamicSet"+this.id).before(newSet);
+        document.getElementById("addSet"+this.id).value = parseInt(setNum) + parseInt(1);
+    }
+}
 
-    return;
-    message = await fetch(BASEURL+"api/workout/add_workout", {
-        method:"POST",
-        headers:{"Content-Type":"application/json",},
-        body: JSON.stringify({"workout":workout.value, "reps":reps.value, "weight":weight.value})
-    });
-
-    if(await message.ok){
+document.getElementById("addNewWorkoutToExisting").addEventListener("click", addNewWorkoutToExisting);
+/**
+ * Add a new exercise to an existing workout
+ */
+async function addNewWorkoutToExisting(){
+    console.log(this.id);
+    date = this.getAttribute("date");
+    workout = document.getElementById("dynamic_workout_input_"+date).value;
+    reps = document.getElementById("dynamic_reps_"+date).value;
+    weight = document.getElementById("dynamic_weight_"+date).value;
+    if(await postWorkout(workout, "1", reps, weight, date)){
         location.reload();
     }
 }
+/**
+ * Dynamically creates the HTML elements for a set that can be appended to the DOM
+ * @param {string} setNumber the set number of this set in the workout
+ * @param {string} reps the amount of reps performed for this set
+ * @param {string} weight the weight performed for this set
+ * @returns a HTML div element with all the set information
+ */
 function createDynamicSet(setNumber, reps, weight){
     setLabel = document.createElement("label");
     setLabel.innerHTML = "Set " + setNumber;
@@ -58,10 +99,12 @@ function createDynamicSet(setNumber, reps, weight){
     setFunctionsDiv.setAttribute("class", "flexColumn");
     deleteBtn = document.createElement("button");
     deleteBtn.type="button";
-    deleteBtn.innerHTML = "X";
+    deleteBtn.innerHTML = "&#10006;";
+    deleteBtn.setAttribute("class", "delete_btn");
     editBtn = document.createElement("button");
     editBtn.type="button";
-    editBtn.innerHTML = "E";
+    editBtn.innerHTML = "&#9998;";
+    editBtn.setAttribute("class", "edit_btn");
     setFunctionsDiv.append(deleteBtn);
     setFunctionsDiv.append(editBtn);
 
@@ -72,7 +115,28 @@ function createDynamicSet(setNumber, reps, weight){
 
     return masterDiv;
 }
+/** 
+* Toggles the visibility the edit set input.
+*/
+function editSetDynamically(){
+    toggleVisibilityById("editSetForm-"+this.id);
+    toggleVisibilityById("setItem-"+this.id);
+}
+/** 
+* Toggles visibilty of an element based on id.
+* @param {string} id - The id of the element to toggle visibility.
+*/
+function toggleVisibilityById(id) {
+    item = document.getElementById(id);
+    if (item.getAttribute("visibility") == "hidden") {
+        item.removeAttribute("visibility");
+    } else {
+        item.setAttribute("visibility", "hidden");
+    }
+}
 
+
+// ################ Add Workout Page #####################
 // Everything below may be deleted soon.
 // Add a set to the first set in the workout form on add_workout
 function addInput() {
@@ -133,19 +197,6 @@ function removeInput() {
         reps.remove();
     }
 }
-
-// Toggles visibilty of an element based on id
-function toggleVisibility(id) {
-    console.log(id);
-    item = document.getElementById(id);
-    if (item.getAttribute("visibility") == "hidden") {
-        console.log("working");
-        item.removeAttribute("visibility");
-    } else {
-        item.setAttribute("visibility", "hidden");
-    }
-}
-
 
 // Adds a new exercise div to Add Workout page
 // Need to work on and add better logic
@@ -208,45 +259,7 @@ function addExercise() {
     notesLabel.before(newDiv);
 
 }
-// This is for the notes and may need to be refactored and changed
-function editExercise(testcaseId) {
-    console.log("edit exercise", typeof (testcaseId));
 
-    notesText = document.getElementById("notesText" + testcaseId);
-    notesDiv = document.getElementById("notesDiv" + testcaseId);
-    editButton = document.getElementById("editButton" + testcaseId);
-    editForm = document.getElementById("editForm" + testcaseId);
-
-    if (notesText.getAttribute("visibility") == "hidden") {
-        notesText.removeAttribute("visibility");
-        editForm.remove();
-    } else {
-        notesText.setAttribute("visibility", "hidden");
-
-        newForm = document.createElement("form");
-        newForm.id = "editForm" + testcaseId;
-        newForm.method = "POST";
-
-        editNotesInput = document.createElement("input");
-        editNotesInput.id = "notesEditInput" + testcaseId;
-        editNotesInput.value = testcaseId;
-        editNotesInput.name = testcaseId;
-        editNotesInput.value = notesText.textContent;
-
-        newForm.append(editNotesInput);
-
-        submitFormButton = document.createElement("button");
-        submitFormButton.textContent = "Submit Changes";
-        submitFormButton.type = "submit";
-
-        linkElement = document.createElement("a");
-        linkElement.action = "/error";
-        linkElement.append(submitFormButton);
-        newForm.append(linkElement);
-        notesDiv.append(newForm);
-    }
-    console.log(testcaseId);
-}
 /** Add a set to the set div based on the div ID
  * The set form includes an input for weight and reps
  * @param {*} setDivId: this is the ID of the div of which to add the set to
@@ -292,8 +305,7 @@ function removeLastSetFromForm(setDivId) {
 }
 
 /**
- * Delete set by database row id.
- * 
+ * Delete set from workouts SQL table by database row id.
  */
 function deleteSet(id) {
     if (id == null) {
@@ -315,14 +327,6 @@ function deleteSet(id) {
     xhr.send();
 }
 
-/**
- * Toggles the visibility of set input elements to allow for making updates
- */
-function edit_set(id) {
-    toggleVisibility("setItem-" + id);
-    toggleVisibility("editSetForm-" + id);
-    toggleVisibility("submitEditSet-" + id);
-}
 
 /**
  * Submits the edits made to the set.
@@ -349,8 +353,10 @@ function submitEdit(id) {
     jsonData = JSON.stringify(body);
     newRequest.send(jsonData);
 }
-/** Removes a workout to the workouts table via POST command
- * 
+
+// ################ Workouts Table ######################
+/** 
+ * Removes a workout to the workouts table via POST command
  */
 function removeWorkout(){
     workoutToRemove = document.getElementById("removeWorkoutSettings").value;
@@ -361,8 +367,8 @@ function removeWorkout(){
         _postJSONData(jsonData, "workout/remove");
     }
 }
-/** Adds a workout exercise to the workouts table. These are the different workout options.
- * 
+/**
+ * Adds a workout exercise to the workouts table. These are the different workout options.
  */
 function addWorkout(){
     workoutToAdd = document.getElementById("addWorkoutSettings").value;
@@ -374,121 +380,8 @@ function addWorkout(){
     }
 }
 
-// async function addDynamicSet(){
-//     document.getElementById("dynamic_workout");
-//     document.getElementById("dynamic_reps");
-//     document.getElementById("dynamic_weight");
-// }
 
-//This is being used for dynamically adding an entirely new workout
-async function submitDynamicWorkout(){
-    workout = document.getElementById("dynamic_workout_input");
-    weight = document.getElementById("dynamic_weight");
-    reps = document.getElementById("dynamic_reps");
-    if (reps.value == "" || weight.value =="" || reps.value == ""){
-        alert("Make sure all fields are populated!");
-        return;
-    }
-    message = await fetch(BASEURL+"api/workout/add_workout", {
-        method:"POST",
-        headers:{"Content-Type":"application/json",},
-        body: JSON.stringify({"workout":workout.value, "reps":reps.value, "weight":weight.value})
-    });
-
-    if(await message.ok){
-        location.reload();
-    }
-}
-
-/**
- * Adds a set to the database and DOM for specific workout. NOT for dynamically added exercises.
- * @param {string} workout_element_id 
- * @param {string} weight_element_id 
- * @param {string} reps_element_id 
- * @param {string} sets_element_id 
- * @param {string} date 
- * @returns 
- */
-async function submitDynamicSetMain(workout_element_id, weight_element_id, reps_element_id, sets_element_id, date){
-    workout = document.getElementById(workout_element_id);
-    weight = document.getElementById(weight_element_id);
-    reps = document.getElementById(reps_element_id);
-    if (sets_element_id == "1"){
-        set = "1";
-    } else {
-        set = document.getElementById(sets_element_id).value;
-    }
-    if (workout.value == "" || weight.value == "" || reps.value ==""){
-        alert("Missing values!");
-        return;
-    }
-    
-    message = await fetch(BASEURL+"api/workout/add_workout", {
-        method:"POST",
-        headers:{"Content-Type":"application/json",},
-        body: JSON.stringify({"workout":workout.value, "reps":reps.value, "weight":weight.value, "set":set, "date":date})
-    });
-
-    if(await message.ok){
-        x = await message.json();
-        console.log(x.id);
-        _addExerciseSetToDom(set, reps_element_id, weight_element_id, "addDynamicSet"+workout.value +"_"+date, x.id);
-        setsElement = document.getElementById(sets_element_id);
-        setsElement.value = parseInt(set) + 1;
-    }
-}
-/**
- * Used by submitDynamicSetMain to append a dumby set to an exercise set on the DOM before the append button (at the end of the list)
- * @param {string} set Set number in workout
- * @param {string} reps Element ID for reps input 
- * @param {string} weight Element ID for weight input
- * @param {string} newSetDivElementId Element ID for element to append new set div before
- * @param {string} rowId 
- * @returns 
- */
-function _addExerciseSetToDom(set, reps, weight, newSetDivElementId, rowId){
-    newDiv = document.createElement("div");
-
-    setInfoLabel = document.createElement("label");
-    repsValue = document.getElementById(reps).value;
-    weightValue = document.getElementById(weight).value;
-
-    if (repsValue == "" || weightValue == ""){
-        alert("Please ensure all fields are inputted.");
-        return;
-    }
-    setInfoLabel.innerHTML = "Set " + set +" <br>" + document.getElementById(reps).value + " Reps x " + document.getElementById(weight).value + " lbs. " + "= " + document.getElementById(reps).value*document.getElementById(weight).value + " Work";
-    
-    newDiv.setAttribute("class", "testSetDiv border");
-    newDiv.id = "testSet_"+rowId;
-    newDiv.append(setInfoLabel);
-
-    setOperatorDiv = document.createElement("div");
-    setOperatorDiv.setAttribute("class", "flexColumn");
-
-    deleteBtn = document.createElement("button");
-    deleteBtn.type="button";
-    deleteBtn.innerHTML = "&#10006;";
-    deleteBtn.setAttribute("class", "delete_btn");
-    deleteBtn.setAttribute("onclick", "deleteSet('" + rowId+"')");
-
-    editBtn = document.createElement("button");
-    editBtn.type="button";
-    editBtn.innerHTML = "&#9998;";
-    editBtn.setAttribute("class", "edit_btn");
-
-    addDynamicSetBtn = document.createElement("button");
-    addDynamicSetBtn.type = "button";
-    addDynamicSetBtn.innerHTML = "+";
-
-    setOperatorDiv.append(deleteBtn);
-    setOperatorDiv.append(editBtn);
-    newDiv.append(setOperatorDiv);
-
-
-    newDynamicSetDiv = document.getElementById(newSetDivElementId);
-    newDynamicSetDiv.before(newDiv);
-}
+// Need to REALLY clean below this
 /**
  * Sends a post request with the workout set data for a specific workout.This is the primary function 
  * @param {string} workout_element_id 
@@ -680,20 +573,7 @@ function submitWorkout(data) {
     newRequest.setRequestHeader("Content-Type", "application/json");
     newRequest.send(jsonWorkoutData);
 }
-/** Parses the main workout form and returns it in JSON format
- * Helper function for submitWorkout
- * @param {string} form_id form element id
- * @returns 
- * jsonWorkoutData which looks like:
- * {12-25-2025 : 
- *      {"Squat":
- *          {"reps":"5", 
- *          "weight":"135"
- *          }
- *      }
- * }
- * 
- */
+
 function _parseForm(form_id){
     myForm = new FormData(document.getElementById("workoutForm"));
     jsonWorkoutData = {};
