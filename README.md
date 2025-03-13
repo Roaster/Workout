@@ -10,7 +10,7 @@ python -m venv venv
 pip install -r requirements.txt
 python db.py
 ```
-## To start, run the following commands:
+## To Start, run the following commands:
 ```powershell
 .\.venv\Scripts\Activate.ps1
 flask --app home run --debug --host 0.0.0.0
