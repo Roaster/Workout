@@ -167,34 +167,6 @@ function removeLastSetFromForm(setDivId) {
 }
 
 
-
-
-/**
- * Submits the edits made to the set.
- * @param {[type]} id The id of the database row to edit
- */
-function submitEdit(id) {
-    set = document.getElementById("editSetFormSet-"+id).value;
-    reps = document.getElementById("editSetFormReps-" + id).value;
-    weight = document.getElementById("editSetFormWeight-" + id).value;
-
-    newRequest = new XMLHttpRequest();
-    newRequest.onload = function () {
-        location.reload();
-    };
-
-    newRequest.open("POST", BASEURL + "update");
-    newRequest.setRequestHeader("Content-Type", "application/json");
-    body = {
-        "id": id,
-        "weight": weight,
-        "reps": reps,
-        "set": set
-    };
-    jsonData = JSON.stringify(body);
-    newRequest.send(jsonData);
-}
-
 // ################ Workouts Table ######################
 /** 
  * Removes a workout to the workouts table via POST command

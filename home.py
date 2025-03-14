@@ -239,10 +239,7 @@ def create_app(test_config=None):
             new_weight = json_data["weight"]
             new_reps = json_data["reps"]
             set_id = json_data["id"]
-            if json_data.get("set"):
-                set_num = json_data["set"]
-            else:
-                set_num = -1
+            set_num = json_data.get("set", -1)
             conn.execute(f"UPDATE workout SET weight='{new_weight}', reps='{new_reps}', setNum='{set_num}' WHERE id = {set_id}")
             logger.info(f"Executed: UPDATE workout SET weight='{new_weight}', reps='{new_reps}', setNum='{set_num}' WHERE id = {set_id}")
             conn.commit()

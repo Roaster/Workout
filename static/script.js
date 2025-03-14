@@ -19,14 +19,58 @@ async function postWorkout(workout, setNum, reps, weight, date){
     }
 }
 
-// ############### Home Page ###################
+/**
+ * Update a workout by ID in the SQL table
+ * @param {string} id workout set id of row to update
+ * @param {string} set set of current workout for exercise to be updated to 
+ * @param {string} reps reps for workout set to be updated to 
+ * @param {string} weight weight for workout set to be updated to
+ * @returns 
+ */
+async function updateWorkout(id, set, reps, weight){
+    message = await fetch(BASEURL+"update", {
+        method:"POST",
+        headers:{"Content-Type":"application/json",},
+        body: JSON.stringify({"id":id, "set":setNum, "reps":reps, "weight":weight})
+    });
+    if (await message.ok){
+        return true;
+    }
+}
+
+/**
+ * Delete set from workouts SQL table by database row id.
+ */
+async function deleteSet(id) {
+    message = await fetch(BASEURL+"delete_by_id/"+id, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"}
+    });
+
+    if (await message.ok){
+        document.getElementById("testSet_"+id).remove();
+        return true;
+    }
+}
+
 //Event Handlers for Edit set buttons
 editSetButtons = document.getElementsByName("editSetBtn");
 for (i=0;i<editSetButtons.length;i++){
     editSetButtons[i].addEventListener("click",editSetDynamically);
 }
+
 //Event Handler for Submit workout button
 document.getElementById("main_submit_btn").addEventListener('click', addDynamicWorkout);
+
+// Event Handlers for addDynamicSet
+submitSetButtons = document.getElementsByName("submit_set");
+for (i = 0; i < submitSetButtons.length; i++){
+    submitSetButtons[i].addEventListener('click', addDynamicSet);
+}
+
+// Event Handlers for addDynamicSet
+document.getElementById("addNewWorkoutToExisting").addEventListener("click", addNewWorkoutToExisting);
+
 /**
  * Add a new workout to the SQL database for the current day
  * @returns 
@@ -43,11 +87,7 @@ async function addDynamicWorkout(){
         location.reload();
     }
 }
-// Event Handlers for addDynamicSet
-submitSetButtons = document.getElementsByName("submit_set");
-for (i = 0; i < submitSetButtons.length; i++){
-    submitSetButtons[i].addEventListener('click', addDynamicSet);
-}
+
 /**
  * Add a new workout set to the database and append to the page
  */
@@ -64,7 +104,6 @@ async function addDynamicSet(){
     }
 }
 
-document.getElementById("addNewWorkoutToExisting").addEventListener("click", addNewWorkoutToExisting);
 /**
  * Add a new exercise to an existing workout
  */
@@ -78,6 +117,7 @@ async function addNewWorkoutToExisting(){
         location.reload();
     }
 }
+
 /**
  * Dynamically creates the HTML elements for a set that can be appended to the DOM
  * @param {string} setNumber the set number of this set in the workout
@@ -115,13 +155,30 @@ function createDynamicSet(setNumber, reps, weight){
 
     return masterDiv;
 }
+
 /** 
-* Toggles the visibility the edit set input.
+* Toggles the visibility of the edit set input form.
 */
 function editSetDynamically(){
     toggleVisibilityById("editSetForm-"+this.id);
     toggleVisibilityById("setItem-"+this.id);
+    toggleVisibilityById("submitEditSet-"+this.id);
 }
+
+/**
+ * Submits the edits made to the set.
+ * @param {[type]} id The id of the database row to edit
+ */
+async function submitEdit(id) {
+    set = document.getElementById("editSetFormSet-"+id).value;
+    reps = document.getElementById("editSetFormReps-" + id).value;
+    weight = document.getElementById("editSetFormWeight-" + id).value;
+
+    if (await updateWorkout(id, set, reps, weight)){
+        location.reload();
+    }
+}
+
 /** 
 * Toggles visibilty of an element based on id.
 * @param {string} id - The id of the element to toggle visibility.
@@ -133,28 +190,4 @@ function toggleVisibilityById(id) {
     } else {
         item.setAttribute("visibility", "hidden");
     }
-}
-
-
-/**
- * Delete set from workouts SQL table by database row id.
- */
-function deleteSet(id) {
-    if (id == null) {
-        console.error("Invalid ID: ID is null or undefined");
-        alert("Invalid ID: Cannot delete the set.");
-        return;
-    }
-    xhr = new XMLHttpRequest();
-
-    xhr.onload = function (message) {
-        document.getElementById("testSet_"+id).remove();
-    };
-
-    xhr.onerror = function () {
-        alert("An error occurred while trying to delete the set. Please try again.");
-    };
-
-    xhr.open("POST", BASEURL + "delete_by_id/" + id);
-    xhr.send();
 }

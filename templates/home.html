@@ -46,11 +46,13 @@
                     {% for set in workoutsJson2[date][exercise] %}
                     <div id="testSet_{{set.workout_id}}" class="testSetDiv border">
                         <p id="setItem-{{set.workout_id}}">Set {{set.set_num}} <br> {{set.reps}} Reps x {{set.weight}} lbs. = {{set.reps|int * set.weight|int}} Work</p>
+
                         <form id="editSetForm-{{set.workout_id}}" class="editSetForm-{{set.workout_id}} flexColumn" visibility="hidden">
                             <label>Set</label><input id="editSetFormSet-{{set.workout_id}}" type="number" value="{{set.set_num}}">
                             <label>Reps</label><input id="editSetFormReps-{{set.workout_id}}" type="number" value="{{set.reps}}">
                             <label>Weight</label><input id="editSetFormWeight-{{set.workout_id}}" type="number" type="number"value="{{set.weight}}">
                         </form>
+                        
                         <div class="flexColumn test">
                             <button onclick="deleteSet('{{set.workout_id}}')" type="button" class="{{set.workout_id}} delete_btn">&#10006;</button>
                             <button id="{{set.workout_id}}" name="editSetBtn" type="button" class="edit_btn">&#9998;</button>
