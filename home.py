@@ -158,8 +158,9 @@ def create_app(test_config=None):
         return render_template("stats.html", bench=bench, squat=squat, deadlift=deadlift, ohp=ohp, benchMax=bench_max, squatMax=squat_max, deadliftMax=deadlift_max, ohpMax=ohp_max, total=total)
 
     
-
-    ###################### API ######################
+    # ----------------------------------------------------
+    # ------------------------ API -----------------------
+    # ----------------------------------------------------
     @app.route("/get_all_workouts2")
     def get_all_workouts2():
         conn = get_db_connection()

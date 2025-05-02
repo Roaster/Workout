@@ -20,7 +20,7 @@ async function postWorkout(workout, setNum, reps, weight, date){
 }
 
 /**
- * Update a workout by ID in the SQL table
+ * Update a workout set by ID in the workouts SQL table
  * @param {string} id workout set id of row to update
  * @param {string} set set of current workout for exercise to be updated to 
  * @param {string} reps reps for workout set to be updated to 
@@ -39,7 +39,7 @@ async function updateWorkout(id, set, reps, weight){
 }
 
 /**
- * Delete set from workouts SQL table by database row id.
+ * Delete a workout set from workouts SQL table by database row id.
  */
 async function deleteSet(id) {
     message = await fetch(BASEURL+"delete_by_id/"+id, {
